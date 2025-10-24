@@ -23,11 +23,11 @@ export function MapView() {
       <div className="flex items-center justify-between">
         <div>
           <h1>{t('nav.map')}</h1>
-          <p className="text-muted-foreground mt-1">View and manage destination locations</p>
+          <p className="text-muted-foreground mt-1">{t('map.description')}</p>
         </div>
         <Button className="bg-[#136F63] hover:bg-[#0F5A51] text-white rounded-xl">
           <Plus className="w-5 h-5 mr-2" />
-          Add Location
+          {t('map.add')}
         </Button>
       </div>
 
@@ -35,13 +35,11 @@ export function MapView() {
         <Card className="lg:col-span-2 rounded-xl overflow-hidden">
           <div className="h-[600px] bg-muted flex items-center justify-center relative">
             <div className="absolute inset-0 bg-gradient-to-br from-[#E8F5F3] to-[#D1EBE7] opacity-50" />
-            <div className="relative z-10 text-center">
+              <div className="relative z-10 text-center">
               <MapPin className="w-16 h-16 mx-auto mb-4 text-[#136F63]" />
-              <h3>Interactive Map</h3>
+              <h3>{t('map.preview.title')}</h3>
               <p className="text-muted-foreground mt-2">
-                Map integration would display here
-                <br />
-                (Mapbox GL or Leaflet)
+                {t('map.preview.description')}
               </p>
             </div>
             {mockMarkers.map((marker) => (
@@ -63,7 +61,7 @@ export function MapView() {
         <Card className="rounded-xl">
           <CardHeader>
             <div className="flex items-center justify-between">
-              <CardTitle>Markers</CardTitle>
+              <CardTitle>{t('map.markers')}</CardTitle>
               <Button variant="ghost" size="icon" className="rounded-lg">
                 <Filter className="w-4 h-4" />
               </Button>
@@ -86,7 +84,7 @@ export function MapView() {
                     <div className="flex-1 min-w-0">
                       <p className="truncate">{marker.name}</p>
                       <Badge variant="secondary" className="mt-1 rounded-lg">
-                        {marker.category}
+                        {t(`destinations.categories.${marker.category.toLowerCase()}`)}
                       </Badge>
                       <p className="text-muted-foreground mt-1">
                         {marker.lat.toFixed(4)}, {marker.lng.toFixed(4)}

@@ -103,7 +103,7 @@ export function Destinations() {
         <div>
           <h1>{t('destinations.title')}</h1>
           <p className="text-muted-foreground mt-1">
-            {filteredDestinations.length} destinations found
+            {t('destinations.found', { count: filteredDestinations.length })}
           </p>
         </div>
         <Button className="bg-[#136F63] hover:bg-[#0F5A51] text-white rounded-xl">
@@ -125,7 +125,7 @@ export function Destinations() {
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">All Categories</SelectItem>
+            <SelectItem value="all">{t('destinations.categories.all')}</SelectItem>
             <SelectItem value="Beaches">{t('destinations.categories.beaches')}</SelectItem>
             <SelectItem value="Nature">{t('destinations.categories.nature')}</SelectItem>
             <SelectItem value="Culture">{t('destinations.categories.culture')}</SelectItem>

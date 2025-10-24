@@ -13,11 +13,7 @@ import { Input } from '../ui/input';
 
 export function Topbar() {
   const { t, i18n } = useTranslation();
-  const { theme, setTheme, effectiveTheme } = useTheme();
-
-  const toggleTheme = () => {
-    setTheme(effectiveTheme === 'light' ? 'dark' : 'light');
-  };
+  const { theme, setTheme, effectiveTheme, toggleTheme } = useTheme();
 
   const changeLanguage = (lng: string) => {
     i18n.changeLanguage(lng);

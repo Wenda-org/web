@@ -48,31 +48,29 @@ export function ML() {
       <div className="flex items-center justify-between">
         <div>
           <h1>{t('nav.ml')}</h1>
-          <p className="text-muted-foreground mt-1">
-            Machine learning models and recommendation engine
-          </p>
+          <p className="text-muted-foreground mt-1">{t('ml.description')}</p>
         </div>
         <Button className="bg-[#136F63] hover:bg-[#0F5A51] text-white rounded-xl">
           <Play className="w-5 h-5 mr-2" />
-          Retrain Models
+          {t('ml.buttons.retrain')}
         </Button>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <StatCard
-          title="Model Accuracy"
+          title={t('ml.kpis.model_accuracy')}
           value="89.2%"
           icon={Target}
           trend={{ value: 2.3, isPositive: true }}
         />
         <StatCard
-          title="Recommendations Served"
+          title={t('ml.kpis.recommendations_served')}
           value="42.3k"
           icon={TrendingUp}
-          subtitle="Last 7 days"
+          subtitle={t('dashboard.subtitles.last_7_days')}
         />
         <StatCard
-          title="Active Models"
+          title={t('ml.kpis.active_models')}
           value="3"
           icon={Brain}
         />
@@ -80,7 +78,7 @@ export function ML() {
 
       <Card className="rounded-xl">
         <CardHeader>
-          <CardTitle>Training Jobs</CardTitle>
+          <CardTitle>{t('ml.training_jobs')}</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="space-y-6">
@@ -94,14 +92,14 @@ export function ML() {
                       <p className="text-muted-foreground">{job.lastRun}</p>
                     </div>
                   </div>
-                  <Badge
+                    <Badge
                     className={`rounded-lg ${
                       job.status === 'completed'
                         ? 'bg-[#06D6A0] hover:bg-[#06D6A0]/90'
                         : 'bg-[#FFD166] text-[#050505] hover:bg-[#FFD166]/90'
                     }`}
                   >
-                    {job.status}
+                    {t(`ml.status.${job.status}`) || job.status}
                   </Badge>
                 </div>
                 <Progress value={job.progress} className="h-2" />
@@ -118,7 +116,7 @@ export function ML() {
 
       <Card className="rounded-xl">
         <CardHeader>
-          <CardTitle>Sample Recommendations</CardTitle>
+          <CardTitle>{t('ml.sample_recommendations')}</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="space-y-3">
@@ -131,9 +129,9 @@ export function ML() {
                   <p>{rec.destination}</p>
                   <p className="text-muted-foreground">User: {rec.userId}</p>
                 </div>
-                <Badge className="bg-[#136F63] hover:bg-[#136F63]/90 rounded-lg">
-                  {(rec.confidence * 100).toFixed(0)}% confident
-                </Badge>
+                  <Badge className="bg-[#136F63] hover:bg-[#136F63]/90 rounded-lg">
+                  {t('ml.confidence_label', { percent: Math.round(rec.confidence * 100) })}
+                  </Badge>
               </div>
             ))}
           </div>

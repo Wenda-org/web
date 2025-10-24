@@ -1,5 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { Settings as SettingsIcon, Globe, Palette, Key } from 'lucide-react';
+import { useTheme } from '../contexts/ThemeContext';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
 import { Input } from '../components/ui/input';
 import '../i18n/config';
@@ -9,11 +10,21 @@ import { Switch } from '../components/ui/switch';
 import { Separator } from '../components/ui/separator';
 
 export function Settings() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const { theme, setTheme } = useTheme();
+
+  const changeLanguage = (lng: string) => {
+    i18n.changeLanguage(lng);
+    try {
+      localStorage.setItem('i18nextLng', lng);
+    } catch {
+      // ignore
+    }
+  };
 
   return (
     <div className="space-y-6">
-      <div>
+        <div>
         <h1>{t('nav.settings')}</h1>
         <p className="text-muted-foreground mt-1">Configure application settings</p>
       </div>
@@ -21,14 +32,14 @@ export function Settings() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <Card className="rounded-xl">
           <CardHeader>
-            <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2">
               <Key className="w-5 h-5 text-[#136F63]" />
-              <CardTitle>API Configuration</CardTitle>
+              <CardTitle>{t('settings.sections.api.title')}</CardTitle>
             </div>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="api-url">API Base URL</Label>
+              <Label htmlFor="api-url">{t('settings.api.base_url')}</Label>
               <Input
                 id="api-url"
                 placeholder="https://api.wenda.ao"
@@ -36,7 +47,7 @@ export function Settings() {
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="api-key">API Key</Label>
+              <Label htmlFor="api-key">{t('settings.api.key')}</Label>
               <Input
                 id="api-key"
                 type="password"
@@ -54,25 +65,29 @@ export function Settings() {
               />
             </div>
             <Button className="w-full bg-[#136F63] hover:bg-[#0F5A51] text-white rounded-xl">
-              Save API Settings
+              {t('settings.buttons.save_api')}
             </Button>
           </CardContent>
         </Card>
 
         <Card className="rounded-xl">
           <CardHeader>
-            <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2">
               <Globe className="w-5 h-5 text-[#136F63]" />
-              <CardTitle>Internationalization</CardTitle>
+              <CardTitle>{t('settings.sections.i18n.title')}</CardTitle>
             </div>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="flex items-center justify-between">
               <div>
-                <Label>Default Language</Label>
+                <Label>{t('settings.appearance.default_language')}</Label>
                 <p className="text-muted-foreground">Set the default language for the app</p>
               </div>
-              <select className="px-4 py-2 rounded-xl bg-input-background border border-border">
+                <select
+                  className="px-4 py-2 rounded-xl bg-input-background border border-border"
+                  value={i18n.language}
+                  onChange={(e) => changeLanguage(e.target.value)}
+                >
                 <option value="en">English</option>
                 <option value="pt">Português</option>
               </select>
@@ -80,7 +95,7 @@ export function Settings() {
             <Separator />
             <div className="flex items-center justify-between">
               <div>
-                <Label>Enable Auto-Translation</Label>
+                <Label>{t('settings.appearance.auto_translation')}</Label>
                 <p className="text-muted-foreground">Automatically translate content</p>
               </div>
               <Switch />
@@ -88,7 +103,7 @@ export function Settings() {
             <Separator />
             <div className="flex items-center justify-between">
               <div>
-                <Label>Show Language Switcher</Label>
+                <Label>{t('settings.appearance.show_language_switcher')}</Label>
                 <p className="text-muted-foreground">Display language options to users</p>
               </div>
               <Switch defaultChecked />
@@ -98,18 +113,22 @@ export function Settings() {
 
         <Card className="rounded-xl">
           <CardHeader>
-            <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2">
               <Palette className="w-5 h-5 text-[#136F63]" />
-              <CardTitle>Appearance</CardTitle>
+              <CardTitle>{t('settings.appearance.theme')}</CardTitle>
             </div>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="flex items-center justify-between">
               <div>
-                <Label>Theme</Label>
+                <Label>{t('settings.appearance.theme')}</Label>
                 <p className="text-muted-foreground">Choose your preferred theme</p>
               </div>
-              <select className="px-4 py-2 rounded-xl bg-input-background border border-border">
+                <select
+                  className="px-4 py-2 rounded-xl bg-input-background border border-border"
+                  value={theme}
+                  onChange={(e) => setTheme(e.target.value as any)}
+                >
                 <option value="auto">Auto</option>
                 <option value="light">Light</option>
                 <option value="dark">Dark</option>
@@ -118,7 +137,7 @@ export function Settings() {
             <Separator />
             <div className="flex items-center justify-between">
               <div>
-                <Label>Compact Mode</Label>
+                <Label>{t('settings.appearance.compact_mode')}</Label>
                 <p className="text-muted-foreground">Reduce spacing and padding</p>
               </div>
               <Switch />
@@ -126,7 +145,7 @@ export function Settings() {
             <Separator />
             <div className="flex items-center justify-between">
               <div>
-                <Label>Show Animations</Label>
+                <Label>{t('settings.appearance.show_animations')}</Label>
                 <p className="text-muted-foreground">Enable smooth transitions</p>
               </div>
               <Switch defaultChecked />

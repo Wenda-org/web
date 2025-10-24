@@ -43,24 +43,24 @@ export function Notifications() {
     <div className="space-y-6">
       <div>
         <h1>{t('nav.notifications')}</h1>
-        <p className="text-muted-foreground mt-1">Send push notifications to users</p>
+        <p className="text-muted-foreground mt-1">{t('notifications.description')}</p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <StatCard
-          title="Total Sent"
+          title={t('notifications.kpis.total_sent')}
           value="15.2k"
           icon={Bell}
-          subtitle="All time"
+          subtitle={t('dashboard.subtitles.all_time')}
         />
         <StatCard
-          title="Delivered Today"
+          title={t('notifications.kpis.delivered_today')}
           value="1,247"
           icon={Send}
           trend={{ value: 12.5, isPositive: true }}
         />
         <StatCard
-          title="Scheduled"
+          title={t('notifications.kpis.scheduled')}
           value="3"
           icon={Calendar}
         />
@@ -69,22 +69,22 @@ export function Notifications() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <Card className="rounded-xl">
           <CardHeader>
-            <CardTitle>Create Notification</CardTitle>
+            <CardTitle>{t('notifications.create_title')}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="title">Title</Label>
+              <Label htmlFor="title">{t('notifications.labels.title')}</Label>
               <Input
                 id="title"
-                placeholder="Enter notification title"
+                placeholder={t('notifications.labels.title')}
                 className="rounded-xl"
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="message">Message</Label>
+              <Label htmlFor="message">{t('notifications.labels.message')}</Label>
               <Textarea
                 id="message"
-                placeholder="Enter notification message"
+                placeholder={t('notifications.labels.message')}
                 rows={4}
                 className="rounded-xl"
               />
@@ -103,11 +103,11 @@ export function Notifications() {
             <div className="flex gap-3">
               <Button className="flex-1 bg-[#136F63] hover:bg-[#0F5A51] text-white rounded-xl">
                 <Send className="w-4 h-4 mr-2" />
-                Send Now
+                {t('notifications.buttons.send_now')}
               </Button>
               <Button variant="outline" className="flex-1 rounded-xl">
                 <Calendar className="w-4 h-4 mr-2" />
-                Schedule
+                {t('notifications.buttons.schedule')}
               </Button>
             </div>
           </CardContent>
@@ -132,7 +132,7 @@ export function Notifications() {
                   </div>
                   <p className="text-muted-foreground mb-2">{notification.message}</p>
                   <div className="flex items-center justify-between text-muted-foreground">
-                    <span>{notification.recipients.toLocaleString()} recipients</span>
+                    <span>{notification.recipients.toLocaleString()} {t('common.recipients')}</span>
                     <span>{notification.sent}</span>
                   </div>
                 </div>

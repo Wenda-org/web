@@ -20,7 +20,7 @@ import {
 export function Landing() {
   const navigate = useNavigate();
   const { t, i18n } = useTranslation();
-  const { theme, toggleTheme } = useTheme();
+  const { theme, setTheme, effectiveTheme } = useTheme();
 
   const toggleLanguage = () => {
     const newLang = i18n.language === 'pt' ? 'en' : 'pt';
@@ -97,10 +97,10 @@ export function Landing() {
               <Button
                 variant="ghost"
                 size="icon"
-                onClick={toggleTheme}
+                onClick={ () => setTheme(effectiveTheme === 'dark' ? 'light' : 'dark') }
                 className="rounded-xl"
               >
-                {theme === 'dark' ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
+                {effectiveTheme === 'dark' ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
               </Button>
               <Button
                 variant="outline"

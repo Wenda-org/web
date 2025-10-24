@@ -65,40 +65,40 @@ export function Monitoring() {
     <div className="space-y-6">
       <div>
         <h1>{t('nav.monitoring')}</h1>
-        <p className="text-muted-foreground mt-1">System health and performance metrics</p>
+        <p className="text-muted-foreground mt-1">{t('monitoring.description')}</p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
         <StatCard
-          title="Uptime"
+          title={t('monitoring.kpis.uptime')}
           value="99.9%"
           icon={CheckCircle}
-          subtitle="Last 30 days"
+          subtitle={t('dashboard.subtitles.last_30_days') || 'Last 30 days'}
         />
         <StatCard
-          title="Error Rate"
+          title={t('monitoring.kpis.error_rate')}
           value="0.6%"
           icon={AlertTriangle}
           trend={{ value: 0.2, isPositive: false }}
         />
         <StatCard
-          title="Avg Response Time"
+          title={t('monitoring.kpis.avg_response_time')}
           value="124ms"
           icon={Activity}
           trend={{ value: 5.1, isPositive: true }}
         />
         <StatCard
-          title="API Requests"
+          title={t('monitoring.kpis.api_requests')}
           value="6.4k"
           icon={TrendingUp}
-          subtitle="Last hour"
+          subtitle={t('dashboard.subtitles.last_hour') || 'Last hour'}
         />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <Card className="rounded-xl">
           <CardHeader>
-            <CardTitle>Error Rate Over Time</CardTitle>
+            <CardTitle>{t('monitoring.charts.error_rate_over_time')}</CardTitle>
           </CardHeader>
           <CardContent>
             <ResponsiveContainer width="100%" height={300}>
@@ -129,7 +129,7 @@ export function Monitoring() {
 
         <Card className="rounded-xl">
           <CardHeader>
-            <CardTitle>Requests by Endpoint</CardTitle>
+            <CardTitle>{t('monitoring.charts.requests_by_endpoint')}</CardTitle>
           </CardHeader>
           <CardContent>
             <ResponsiveContainer width="100%" height={300}>
@@ -154,7 +154,7 @@ export function Monitoring() {
 
       <Card className="rounded-xl">
         <CardHeader>
-          <CardTitle>Recent Errors</CardTitle>
+          <CardTitle>{t('monitoring.recent_errors')}</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="space-y-3">

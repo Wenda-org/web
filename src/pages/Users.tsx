@@ -58,11 +58,11 @@ export function Users() {
       <div className="flex items-center justify-between">
         <div>
           <h1>{t('users.title')}</h1>
-          <p className="text-muted-foreground mt-1">Manage user accounts and permissions</p>
+          <p className="text-muted-foreground mt-1">{t('users.description')}</p>
         </div>
         <Button className="bg-[#136F63] hover:bg-[#0F5A51] text-white rounded-xl">
           <UserPlus className="w-5 h-5 mr-2" />
-          Add User
+          {t('users.add')}
         </Button>
       </div>
 
@@ -80,29 +80,29 @@ export function Users() {
           subtitle="95.3% of total"
         />
         <StatCard
-          title="Admins"
+          title={t('users.stats.admins')}
           value="12"
           icon={Shield}
         />
       </div>
 
       <Card className="rounded-xl">
-        <CardHeader>
+            <CardHeader>
           <div className="flex items-center justify-between">
-            <CardTitle>User List</CardTitle>
-            <SearchBar placeholder="Search users..." className="w-80" />
+            <CardTitle>{t('users.table.title')}</CardTitle>
+            <SearchBar placeholder={t('common.search_users_placeholder')} className="w-80" />
           </div>
         </CardHeader>
         <CardContent>
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Name</TableHead>
-                <TableHead>Email</TableHead>
-                <TableHead>Role</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Last Login</TableHead>
-                <TableHead>Actions</TableHead>
+                <TableHead>{t('users.table.name')}</TableHead>
+                <TableHead>{t('users.table.email')}</TableHead>
+                <TableHead>{t('users.table.role')}</TableHead>
+                <TableHead>{t('users.table.status')}</TableHead>
+                <TableHead>{t('users.table.last_login')}</TableHead>
+                <TableHead>{t('users.table.actions')}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -127,7 +127,7 @@ export function Users() {
                           : 'bg-muted'
                       }`}
                     >
-                      {user.status}
+                      {t(`users.${user.status}`) || user.status}
                     </Badge>
                   </TableCell>
                   <TableCell className="text-muted-foreground">{user.lastLogin}</TableCell>

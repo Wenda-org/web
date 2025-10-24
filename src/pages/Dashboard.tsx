@@ -82,7 +82,7 @@ export function Dashboard() {
           value="1,247"
           icon={Users}
           trend={{ value: 12.5, isPositive: true }}
-          subtitle="Last 24 hours"
+          subtitle={t('dashboard.subtitles.last_24_hours')}
         />
         <StatCard
           title={t('dashboard.kpis.destinations')}
@@ -132,7 +132,7 @@ export function Dashboard() {
                   stroke="#136F63"
                   strokeWidth={2}
                   dot={{ fill: '#136F63' }}
-                  name="Active Users"
+                  name={t('dashboard.kpis.active_users')}
                 />
               </LineChart>
             </ResponsiveContainer>
@@ -157,7 +157,7 @@ export function Dashboard() {
                   }}
                 />
                 <Legend />
-                <Bar dataKey="count" fill="#136F63" radius={[8, 8, 0, 0]} name="Destinations" />
+                <Bar dataKey="count" fill="#136F63" radius={[8, 8, 0, 0]} name={t('dashboard.kpis.destinations')} />
               </BarChart>
             </ResponsiveContainer>
           </CardContent>
@@ -170,20 +170,25 @@ export function Dashboard() {
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
-            {recentActivities.map((activity) => (
-              <div
-                key={activity.id}
-                className="flex items-start gap-4 pb-4 border-b border-border last:border-0 last:pb-0"
-              >
-                <div className="w-2 h-2 rounded-full bg-[#136F63] mt-2" />
-                <div className="flex-1">
-                  <p>{activity.description}</p>
-                  <p className="text-muted-foreground mt-1">
-                    {activity.user} • {activity.time}
-                  </p>
+            {recentActivities.map((activity) => {
+              const nameMatch = activity.description.match(/"([^"]+)"/)?.[1];
+              const numberMatch = activity.description.match(/[\d,]+/)?.[0];
+              const countNum = numberMatch ? Number(numberMatch.replace(/,/g, '')) : undefined;
+              return (
+                <div
+                  key={activity.id}
+                  className="flex items-start gap-4 pb-4 border-b border-border last:border-0 last:pb-0"
+                >
+                  <div className="w-2 h-2 rounded-full bg-[#136F63] mt-2" />
+                  <div className="flex-1">
+                    <p>{t(`dashboard.activity.${activity.type}`, { name: nameMatch || '', count: countNum })}</p>
+                    <p className="text-muted-foreground mt-1">
+                      {activity.user} • {activity.time}
+                    </p>
+                  </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </CardContent>
       </Card>
