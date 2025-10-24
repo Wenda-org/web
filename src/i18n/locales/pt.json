@@ -1,0 +1,174 @@
+{
+  "common": {
+    "search": "Pesquisar",
+    "search_placeholder": "Pesquisar...",
+    "filter": "Filtrar",
+    "export": "Exportar",
+    "import": "Importar",
+    "save": "Guardar",
+    "cancel": "Cancelar",
+    "delete": "Eliminar",
+    "edit": "Editar",
+    "create": "Criar",
+    "view": "Ver",
+    "loading": "A carregar...",
+    "no_data": "Sem dados disponíveis",
+    "confirm": "Confirmar",
+    "back": "Voltar"
+  },
+  "nav": {
+    "dashboard": "Painel",
+    "destinations": "Destinos",
+    "map": "Mapa",
+    "users": "Utilizadores",
+    "ml": "Recomendações",
+    "monitoring": "Monitorização",
+    "notifications": "Notificações",
+    "settings": "Definições",
+    "logout": "Sair"
+  },
+  "dashboard": {
+    "title": "Painel",
+    "welcome": "Bem-vindo",
+    "kpis": {
+      "active_users": "Utilizadores Ativos",
+      "destinations": "Destinos",
+      "favorites": "Total de Favoritos",
+      "recommendations": "Recomendações Servidas"
+    },
+    "charts": {
+      "users_over_time": "Utilizadores ao Longo do Tempo",
+      "destinations_by_category": "Destinos por Categoria",
+      "engagement": "Envolvimento do Utilizador"
+    },
+    "recent_activity": "Atividade Recente"
+  },
+  "destinations": {
+    "title": "Destinos",
+    "add": "Adicionar Destino",
+    "edit": "Editar Destino",
+    "delete_confirm": "Tem certeza que deseja eliminar este destino?",
+    "fields": {
+      "name": "Nome",
+      "description": "Descrição",
+      "category": "Categoria",
+      "location": "Localização",
+      "rating": "Avaliação",
+      "distance": "Distância",
+      "status": "Estado",
+      "featured": "Destaque"
+    },
+    "categories": {
+      "beaches": "Praias",
+      "nature": "Natureza",
+      "culture": "Cultura",
+      "adventure": "Aventura",
+      "restaurants": "Restaurantes",
+      "hotels": "Hotéis"
+    }
+  },
+  "users": {
+    "title": "Utilizadores",
+    "total": "Total de Utilizadores",
+    "active": "Ativos",
+    "roles": {
+      "admin": "Administrador",
+      "editor": "Editor",
+      "viewer": "Visualizador"
+    }
+  },
+  "auth": {
+    "login": "Entrar",
+    "email": "Email",
+    "password": "Palavra-passe",
+    "forgot_password": "Esqueceu a palavra-passe?",
+    "sign_in_google": "Entrar com Google",
+    "welcome": "Bem-vindo ao Wenda Admin"
+  },
+  "landing": {
+    "header": {
+      "subtitle": "Painel Administrativo",
+      "login": "Entrar"
+    },
+    "hero": {
+      "badge": "Plataforma de Turismo para Angola",
+      "title": "Gerencie o Turismo de Angola",
+      "description": "Painel administrativo completo para gerenciar destinos, usuários e análises da plataforma Wenda com ferramentas avançadas de IA.",
+      "cta": "Acessar Painel",
+      "secondary": "Fazer Login"
+    },
+    "stats": {
+      "users": "Usuários Ativos",
+      "destinations": "Destinos",
+      "uptime": "Uptime",
+      "support": "Suporte"
+    },
+    "features": {
+      "title": "Recursos Principais",
+      "subtitle": "Ferramentas poderosas para gerenciar sua plataforma de turismo",
+      "analytics": {
+        "title": "Analytics Avançado",
+        "description": "Visualize KPIs em tempo real e tome decisões baseadas em dados"
+      },
+      "destinations": {
+        "title": "Gestão de Destinos",
+        "description": "Gerencie destinos turísticos com interface intuitiva e visual"
+      },
+      "users": {
+        "title": "Controle de Usuários",
+        "description": "Administre usuários, perfis e permissões de acesso"
+      },
+      "ml": {
+        "title": "Recomendações IA",
+        "description": "Sistema de recomendações inteligente com machine learning"
+      },
+      "i18n": {
+        "title": "Multilíngue",
+        "description": "Suporte completo para português e inglês"
+      },
+      "security": {
+        "title": "Segurança",
+        "description": "Autenticação robusta e controle de acesso granular"
+      }
+    },
+    "preview": {
+      "title": "Interface Moderna e Intuitiva",
+      "description": "Dashboard completo com visualizações de dados em tempo real, gráficos interativos e ferramentas de gestão integradas.",
+      "feature1": "Visualização de dados em tempo real",
+      "feature2": "Interface responsiva e adaptável",
+      "feature3": "Modo escuro/claro automático",
+      "feature4": "Navegação intuitiva e rápida"
+    },
+    "mobile": {
+      "title": "Integração com App Mobile",
+      "description": "Gerencie seu aplicativo móvel Wenda diretamente do painel administrativo. Atualizações em tempo real sincronizadas com os usuários.",
+      "sync": {
+        "title": "Sincronização Instantânea",
+        "description": "Mudanças refletidas imediatamente no app mobile"
+      },
+      "push": {
+        "title": "Notificações Push",
+        "description": "Envie notificações para usuários mobile"
+      }
+    },
+    "cta": {
+      "title": "Pronto para começar?",
+      "description": "Acesse o painel administrativo e comece a gerenciar sua plataforma de turismo agora mesmo.",
+      "primary": "Acessar Painel",
+      "secondary": "Fazer Login"
+    },
+    "footer": {
+      "subtitle": "Turismo em Angola",
+      "description": "Plataforma de turismo líder em Angola, conectando viajantes a experiências únicas.",
+      "product": "Produto",
+      "dashboard": "Painel",
+      "destinations": "Destinos",
+      "users": "Usuários",
+      "company": "Empresa",
+      "about": "Sobre",
+      "contact": "Contato",
+      "privacy": "Privacidade",
+      "rights": "Todos os direitos reservados."
+    }
+  }
+}
