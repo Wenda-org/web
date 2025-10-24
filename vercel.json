@@ -1,0 +1,7 @@
+{
+  "buildCommand": "npm install --force && npm run build",
+  "outputDirectory": "dist",
+  "routes": [
+    { "src": "/(.*)", "dest": "/index.html" }
+  ]
+}
