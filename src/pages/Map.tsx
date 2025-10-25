@@ -1,10 +1,15 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { MapPin, Filter, Plus } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
 import '../i18n/config';
 import { Button } from '../components/ui/button';
 import { Badge } from '../components/ui/badge';
+
+// react-leaflet
+import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
+import * as L from 'leaflet';
+import 'leaflet/dist/leaflet.css';
 
 const mockMarkers = [
   { id: '1', name: 'Cabo Ledo Beach', lat: -9.5, lng: 13.1, category: 'Beaches' },
@@ -17,6 +22,64 @@ const mockMarkers = [
 export function MapView() {
   const { t } = useTranslation();
   const [selectedMarker, setSelectedMarker] = useState<string | null>(null);
+  const [map, setMap] = useState<import('leaflet').Map | null>(null);
+
+  // center the map on Luanda (moderate zoom)
+  const center: [number, number] = [-8.8383, 13.2344];
+  const zoom = 12;
+
+  // create a simple SVG pin icon for markers so they look nicer than default
+  const createIcon = (color = '#136F63') => {
+    const svg = `
+      <svg width="28" height="36" viewBox="0 0 24 34" xmlns="http://www.w3.org/2000/svg">
+        <path d="M12 0C7.03 0 3 4.03 3 9c0 6 9 20 9 20s9-14 9-20c0-4.97-4.03-9-9-9z" fill="${color}" />
+        <circle cx="12" cy="9" r="3" fill="#ffffff" />
+      </svg>
+    `;
+
+    return L.divIcon({
+      html: svg,
+      className: 'custom-pin-icon',
+      iconSize: [28, 36],
+      iconAnchor: [14, 34],
+      popupAnchor: [0, -34],
+    });
+  };
+
+  // category -> color map
+  const categoryColors: Record<string, string> = {
+    beaches: '#1E90FF',
+    nature: '#228B22',
+    culture: '#FF8C00',
+    adventure: '#8B008B',
+  };
+
+  // helper to focus a marker: set view and open a popup programmatically
+  const focusMarker = (marker: typeof mockMarkers[number]) => {
+    if (!map) return;
+    const latlng: [number, number] = [marker.lat, marker.lng];
+    map.setView(latlng, 14, { animate: true });
+    const content = `<div><strong>${marker.name}</strong><div style="font-size:12px;color:#6b7280">${marker.lat.toFixed(4)}, ${marker.lng.toFixed(4)}</div></div>`;
+    import('leaflet').then((L) => {
+      L.popup({ maxWidth: 300 }).setLatLng(latlng).setContent(content).openOn(map);
+    });
+    setSelectedMarker(marker.id);
+  };
+
+  // small component used inside MapContainer to get map instance via hook
+  function MapEffect({ onMap }: { onMap: (m: import('leaflet').Map) => void }) {
+    const map = useMap();
+    useEffect(() => {
+      onMap(map);
+    }, [map]);
+    return null;
+  }
+
+  // quick validation: check whether markers are inside Angola bounding box (approx)
+  const ANGOLA_BOUNDS = { latMin: -18.0, latMax: -4.0, lngMin: 11.0, lngMax: 24.0 };
+  const outOfBounds = mockMarkers.filter(
+    (m) => m.lat < ANGOLA_BOUNDS.latMin || m.lat > ANGOLA_BOUNDS.latMax || m.lng < ANGOLA_BOUNDS.lngMin || m.lng > ANGOLA_BOUNDS.lngMax
+  );
 
   return (
     <div className="space-y-6">
@@ -32,30 +95,37 @@ export function MapView() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <Card className="lg:col-span-2 rounded-xl overflow-hidden">
-          <div className="h-[600px] bg-muted flex items-center justify-center relative">
-            <div className="absolute inset-0 bg-gradient-to-br from-[#E8F5F3] to-[#D1EBE7] opacity-50" />
-              <div className="relative z-10 text-center">
-              <MapPin className="w-16 h-16 mx-auto mb-4 text-[#136F63]" />
-              <h3>{t('map.preview.title')}</h3>
-              <p className="text-muted-foreground mt-2">
-                {t('map.preview.description')}
-              </p>
-            </div>
+        <Card className="lg:col-span-2 rounded-xl overflow-hidden p-0 relative h-[600px]">
+          <MapContainer
+            center={center}
+            zoom={zoom}
+            scrollWheelZoom={true}
+            className="h-full w-full"
+          >
+            <MapEffect onMap={setMap} />
+            <TileLayer
+              attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+            />
+
             {mockMarkers.map((marker) => (
-              <div
+              <Marker
                 key={marker.id}
-                className="absolute w-8 h-8 bg-[#136F63] rounded-full flex items-center justify-center cursor-pointer hover:scale-110 transition-transform shadow-lg"
-                style={{
-                  left: `${((marker.lng - 12) / 4) * 100 + 30}%`,
-                  top: `${((marker.lat + 15) / 7) * 100 + 10}%`,
-                }}
-                onClick={() => setSelectedMarker(marker.id)}
+                position={[marker.lat, marker.lng]}
+                icon={createIcon(categoryColors[marker.category.toLowerCase()] || '#136F63')}
+                eventHandlers={{ click: () => setSelectedMarker(marker.id) }}
               >
-                <MapPin className="w-5 h-5 text-white" />
-              </div>
+                <Popup>
+                  <div>
+                    <strong>{marker.name}</strong>
+                    <div className="text-sm text-muted-foreground">
+                      {marker.lat.toFixed(4)}, {marker.lng.toFixed(4)}
+                    </div>
+                  </div>
+                </Popup>
+              </Marker>
             ))}
-          </div>
+          </MapContainer>
         </Card>
 
         <Card className="rounded-xl">
@@ -68,6 +138,18 @@ export function MapView() {
             </div>
           </CardHeader>
           <CardContent>
+            {outOfBounds.length > 0 && (
+              <div className="mb-4 p-3 rounded-md bg-yellow-50 border border-yellow-200 text-sm text-yellow-800">
+                Alguns marcadores parecem estar fora dos limites aproximados de Angola. Verifique as coordenadas:
+                <ul className="mt-2 list-disc list-inside">
+                  {outOfBounds.map((m) => (
+                    <li key={m.id}>
+                      {m.name}: {m.lat}, {m.lng}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
             <div className="space-y-3">
               {mockMarkers.map((marker) => (
                 <div
@@ -77,7 +159,7 @@ export function MapView() {
                       ? 'border-[#136F63] bg-[#E8F5F3]'
                       : 'border-border hover:border-[#136F63]'
                   }`}
-                  onClick={() => setSelectedMarker(marker.id)}
+                  onClick={() => focusMarker(marker)}
                 >
                   <div className="flex items-start gap-3">
                     <MapPin className="w-5 h-5 text-[#136F63] flex-shrink-0 mt-0.5" />
