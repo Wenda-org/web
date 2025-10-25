@@ -16,6 +16,8 @@ import {
   Moon,
   Languages
 } from 'lucide-react';
+import LogoFull from '../public/images/logo/logo.png';
+import LogoBola from '../public/images/logo/logo-bola.png';
 
 export function Landing() {
   const navigate = useNavigate();
@@ -74,16 +76,14 @@ export function Landing() {
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-primary flex items-center justify-center">
-                <span className="text-primary-foreground">W</span>
+                <img src={LogoBola} alt="Wenda" className="w-10 h-10" />
+                <div>
+                  <img src={LogoFull} alt="Wenda" className="h-6" />
+                  <p className="text-[12px] text-muted-foreground">
+                    {t('landing.header.subtitle', 'Painel Administrativo')}
+                  </p>
+                </div>
               </div>
-              <div>
-                <h1 className="text-primary">Wenda</h1>
-                <p className="text-[12px] text-muted-foreground">
-                  {t('landing.header.subtitle', 'Painel Administrativo')}
-                </p>
-              </div>
-            </div>
             
             <div className="flex items-center gap-2">
               <Button

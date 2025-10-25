@@ -3,6 +3,7 @@ import { Search, Bell, Moon, Sun, Languages, LogOut } from 'lucide-react';
 import { useTheme } from '../../contexts/ThemeContext';
 import { Button } from '../ui/button';
 import '../../i18n/config';
+import LogoBola from '../../public/images/logo/logo-bola.png';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -22,6 +23,7 @@ export function Topbar() {
   return (
     <header className="h-16 bg-background border-b border-border flex items-center justify-between px-6">
       <div className="flex items-center gap-4 flex-1 max-w-md">
+        <img src={LogoBola} alt="Wenda" className="w-8 h-8 mr-2" />
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
           <Input

@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { Mail, Lock } from 'lucide-react';
 import { Button } from '../components/ui/button';
 import '../i18n/config';
+import LogoBola from '../public/images/logo/logo-bola.png';
 import { Input } from '../components/ui/input';
 import { Label } from '../components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
@@ -23,7 +24,7 @@ export function Login() {
     <div className="min-h-screen flex items-center justify-center bg-background p-6">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
-          <h1 className="text-[#136F63] mb-2">Wenda Admin</h1>
+          <img src={LogoBola} alt="Wenda" className="mx-auto w-16 h-16 mb-2" />
           <p className="text-muted-foreground">{t('auth.welcome')}</p>
         </div>
 

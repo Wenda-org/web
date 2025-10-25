@@ -11,6 +11,7 @@ import {
   Settings,
 } from 'lucide-react';
 import '../../i18n/config';
+import LogoBola from '../../public/images/logo/logo-bola.png';
 
 const navItems = [
   { to: '/dashboard', icon: LayoutDashboard, label: 'nav.dashboard' },
@@ -29,7 +30,10 @@ export function Sidebar() {
   return (
     <aside className="w-64 h-screen bg-sidebar border-r border-sidebar-border flex flex-col">
       <div className="p-6 border-b border-sidebar-border">
-        <h1 className="text-[#136F63]">Wenda Admin</h1>
+        <div className="flex items-center gap-3">
+          <img src={LogoBola} alt="Wenda" className="w-10 h-10" />
+          <h1 className="text-[#136F63] font-bold">Wenda Admin</h1>
+        </div>
       </div>
 
       <nav className="flex-1 p-4 space-y-1">
@@ -53,9 +57,7 @@ export function Sidebar() {
 
       <div className="p-4 border-t border-sidebar-border">
         <div className="flex items-center gap-3 px-4 py-3">
-          <div className="w-8 h-8 rounded-full bg-[#136F63] flex items-center justify-center text-white">
-            A
-          </div>
+          <img src={LogoBola} alt="avatar" className="w-8 h-8 rounded-full" />
           <div className="flex-1 min-w-0">
             <p className="truncate">Admin User</p>
             <p className="text-muted-foreground truncate">admin@wenda.ao</p>
