@@ -17,6 +17,7 @@ import {
   Languages
 } from 'lucide-react';
 import LogoFull from '../public/images/logo/logo.png';
+import LogoBola from '../public/images/logo/logo-bola.png';
 
 export function Landing() {
   const navigate = useNavigate();
@@ -69,13 +70,14 @@ export function Landing() {
   ];
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen login-bg">
+      <div className="login-content">
       {/* Header */}
       <header className="border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-50">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-                <img src={LogoFull} alt="Wenda" className="w-10 h-10" />
+                <img src={LogoBola} alt="Wenda" className="w-10 h-10" />
                 <div>
                   <img src={LogoFull} alt="Wenda" className="h-6" />
                   <p className="text-[12px] text-muted-foreground">
@@ -399,6 +401,7 @@ export function Landing() {
           </div>
         </div>
       </footer>
+      </div>
     </div>
   );
 }

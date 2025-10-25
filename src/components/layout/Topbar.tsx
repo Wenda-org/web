@@ -16,10 +16,15 @@ export function Topbar() {
   const { t, i18n } = useTranslation();
   const { theme, setTheme, effectiveTheme, toggleTheme } = useTheme();
 
-  const changeLanguage = (lng: string) => {
-    i18n.changeLanguage(lng);
+  const changeLanguage = (lng?: string) => {
+    const target = lng || (i18n.language === 'en' ? 'pt' : 'en');
+    i18n.changeLanguage(target);
+    try {
+      localStorage.setItem('i18nextLng', target);
+    } catch (e) {
+      // ignore
+    }
   };
-
   return (
     <header className="h-16 bg-background border-b border-border flex items-center justify-between px-6">
   <div className="flex items-center gap-4 flex-1 max-w-md">
@@ -37,9 +42,9 @@ export function Topbar() {
       <div className="flex items-center gap-2">
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="ghost" size="icon" className="rounded-xl">
+            {/* <Button variant="ghost" size="icon" className="rounded-xl">
               <Languages className="w-5 h-5" />
-            </Button>
+            </Button> */}
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             <DropdownMenuItem onClick={() => changeLanguage('en')}>
@@ -50,6 +55,17 @@ export function Topbar() {
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
+
+        {/* Quick toggle: switch language immediately without opening menu */}
+        <Button
+          variant="ghost"
+          size="icon"
+          className="rounded-xl px-2"
+          onClick={() => changeLanguage()}
+          title={t('settings.appearance.default_language')}
+        >
+          {(i18n.language || 'en').slice(0,2).toUpperCase()}
+        </Button>
 
         <Button
           variant="ghost"

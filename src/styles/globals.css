@@ -76,6 +76,13 @@
   
   --shadow-light: 0 2px 4px rgba(0,0,0,0.1);
   --shadow-card: 0 1px 2px rgba(0,0,0,0.2);
+
+  /* login gradient stops (light mode defaults) — stronger bluish/purple tones */
+  --login-g-1: rgba(10,20,60,0.08);
+  --login-g-2: rgba(25,60,140,0.16);
+  --login-g-3: rgba(140,60,200,0.22);
+  --login-g-4: rgba(25,60,140,0.16);
+  --login-g-5: rgba(10,20,60,0.08);
 }
 
 .dark {
@@ -128,6 +135,13 @@
   
   --shadow-light: 0 2px 4px rgba(0,0,0,0.3);
   --shadow-card: 0 1px 2px rgba(0,0,0,0.4);
+
+  /* login gradient stops (dark mode overrides) — even stronger, high-contrast */
+  --login-g-1: rgba(8,12,30,0.10);
+  --login-g-2: rgba(30,70,160,0.20);
+  --login-g-3: rgba(160,80,220,0.26);
+  --login-g-4: rgba(30,70,160,0.20);
+  --login-g-5: rgba(8,12,30,0.10);
 }
 
 @theme inline {
@@ -238,4 +252,94 @@
 
 html {
   font-size: var(--font-size);
+}
+
+/* Small entry animation used for login card */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.animate-fade-in-up {
+  animation: fadeInUp 360ms cubic-bezier(.2,.9,.2,1) both;
+}
+
+/* Moving gray gradient background used on login */
+@keyframes gradientMove {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.login-bg {
+  position: relative;
+  background: var(--background);
+  overflow: hidden;
+}
+.login-bg::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  /* subtle animated gradient using CSS variables so it adapts to theme */
+  background: linear-gradient(120deg,
+    var(--login-g-1) 0%,
+    var(--login-g-2) 25%,
+    var(--login-g-3) 50%,
+    var(--login-g-4) 75%,
+    var(--login-g-5) 100%);
+  background-size: 240% 240%;
+  /* balanced speed for landing: faster than the very slow iteration but smoother than original — 16s */
+  animation: gradientMove 16s ease-in-out infinite;
+  pointer-events: none;
+}
+
+/* In light mode invert the gradient stop direction to increase contrast on white background */
+.light .login-bg::before {
+  background: linear-gradient(120deg,
+    var(--login-g-5) 0%,
+    var(--login-g-4) 25%,
+    var(--login-g-3) 50%,
+    var(--login-g-2) 75%,
+    var(--login-g-1) 100%);
+}
+
+/* extra glossy radial highlight layer to emulate PS3-like sheen */
+@keyframes radialShift {
+  0% { transform: translate(-10%, -10%) scale(1); opacity: 0.55; }
+  50% { transform: translate(10%, 10%) scale(1.15); opacity: 0.8; }
+  100% { transform: translate(-10%, -10%) scale(1); opacity: 0.55; }
+}
+
+.login-bg::after {
+  content: "";
+  position: absolute;
+  inset: -25% -25% -25% -25%;
+  z-index: 0;
+  background: radial-gradient(700px 450px at 18% 28%, rgba(160,110,255,0.22), transparent 22%),
+              radial-gradient(520px 320px at 82% 72%, rgba(60,170,255,0.14), transparent 20%),
+              radial-gradient(400px 300px at 50% 50%, rgba(120,80,200,0.08), transparent 30%);
+  filter: blur(46px) saturate(140%);
+  mix-blend-mode: screen;
+  /* balanced sheen speed so the highlight moves noticeably but doesn't feel sluggish — 18s */
+  animation: radialShift 18s ease-in-out infinite;
+  pointer-events: none;
+}
+
+/* Ensure login content sits above the animated overlay */
+.login-bg > .login-content {
+  position: relative;
+  z-index: 1;
+}
+
+/* translucent login card for better sheen integration */
+.login-card {
+  background-color: rgba(255,255,255,0.76);
+  border-color: rgba(0,0,0,0.06);
+  backdrop-filter: blur(6px) saturate(110%);
+}
+
+.dark .login-card {
+  background-color: rgba(24,25,26,0.6);
+  border-color: rgba(255,255,255,0.04);
+  backdrop-filter: blur(6px) saturate(120%);
 }
