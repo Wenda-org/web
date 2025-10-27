@@ -9,7 +9,7 @@ const getApiBaseUrl = () => {
     if (eveurl) {
         return eveurl;
     }
-    return 'http://127.0.0.1:8000';
+    return 'https://backend-core-rzxx.onrender.com';
 }
 
 const url = getApiBaseUrl();

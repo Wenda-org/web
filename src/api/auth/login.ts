@@ -1,6 +1,6 @@
 import api from "../config"
 
-export async function apiLogin(data: { emil: String, password: String }) {
+export async function apiLogin(data: { email: String, password: String }) {
     try {
         const response = await api.post<any>('/auth/login', data);
         const { token, message, user } = response.data;

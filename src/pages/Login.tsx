@@ -45,7 +45,7 @@ export function Login() {
       return;
     }
     try {
-      const response = await apiLogin({email: email, password});
+      const response = await apiLogin({ email: email, password });
       if (response) {
         setLoading(false);
         window.location.href = '/dashboard';
