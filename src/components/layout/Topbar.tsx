@@ -11,10 +11,12 @@ import {
   DropdownMenuTrigger,
 } from '../ui/dropdown-menu';
 import { Input } from '../ui/input';
+import { useNavigate, useNavigation } from 'react-router-dom';
 
 export function Topbar() {
   const { t, i18n } = useTranslation();
   const { theme, setTheme, effectiveTheme, toggleTheme } = useTheme();
+  const navigate = useNavigate();
 
   const changeLanguage = (lng?: string) => {
     const target = lng || (i18n.language === 'en' ? 'pt' : 'en');
@@ -24,6 +26,10 @@ export function Topbar() {
     } catch (e) {
       // ignore
     }
+  };
+   const handleLogout = async () => {
+    localStorage.removeItem("authToken")
+    navigate('/login');
   };
   return (
     <header className="h-16 bg-background border-b border-border flex items-center justify-between px-6">
@@ -79,13 +85,7 @@ export function Topbar() {
             <Sun className="w-5 h-5" />
           )}
         </Button>
-
-        <Button variant="ghost" size="icon" className="rounded-xl relative">
-          <Bell className="w-5 h-5" />
-          <span className="absolute top-1 right-1 w-2 h-2 bg-[#EF476F] rounded-full" />
-        </Button>
-
-        <Button variant="ghost" size="icon" className="rounded-xl">
+        <Button variant="ghost" size="icon" className="rounded-xl" onClick={() => handleLogout()}>
           <LogOut className="w-5 h-5" />
         </Button>
       </div>

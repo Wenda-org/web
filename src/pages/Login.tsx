@@ -8,6 +8,7 @@ import { Input } from '../components/ui/input';
 import { Label } from '../components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
 import { useTheme } from '../contexts/ThemeContext';
+import apiLogin from '../api/index.ts'
 
 export function Login() {
   const { t, i18n } = useTranslation();
@@ -28,30 +29,31 @@ export function Login() {
     }
   };
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
     setLoading(true);
 
-    // Simulate async auth request
-    setTimeout(() => {
-      if (!email || !email.includes('@')) {
-        setError('Please enter a valid email.');
-        setLoading(false);
-        return;
-      }
-
-      if (!password || password.length < 4) {
-        setError('Password must be at least 4 characters.');
-        setLoading(false);
-        return;
-      }
-
-      // previously remembered email logic removed
-
+    if (!email || !email.includes('@')) {
+      setError('Please enter a valid email.');
       setLoading(false);
-      window.location.href = '/dashboard';
-    }, 700);
+      return;
+    }
+    if (!password || password.length < 4) {
+      setError('Password must be at least 4 characters.');
+      setLoading(false);
+      return;
+    }
+    try {
+      const response = await apiLogin({email: email, password});
+      if (response) {
+        setLoading(false);
+        window.location.href = '/dashboard';
+      }
+    } catch (error) {
+      console.log(error);
+      setLoading(false);
+    }
   };
 
   return (
