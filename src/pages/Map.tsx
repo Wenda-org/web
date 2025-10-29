@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { MapPin, Filter, Plus } from 'lucide-react';
+import { useTheme } from '../contexts/ThemeContext';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
 import '../i18n/config';
 import { Button } from '../components/ui/button';
@@ -21,18 +22,37 @@ const mockMarkers = [
 
 export function MapView() {
   const { t } = useTranslation();
+  const { effectiveTheme } = useTheme();
   const [selectedMarker, setSelectedMarker] = useState<string | null>(null);
   const [map, setMap] = useState<import('leaflet').Map | null>(null);
+  const [baseLayer, setBaseLayer] = useState<'auto' | 'light' | 'dark'>('auto');
 
   // center the map on Luanda (moderate zoom)
   const center: [number, number] = [-8.8383, 13.2344];
   const zoom = 12;
 
+  // small helper: blend hex color with white to make it lighter for dark backgrounds
+  const lighten = (hex: string, amount = 0.35) => {
+    try {
+      const h = hex.replace('#', '');
+      const r = parseInt(h.substring(0, 2), 16);
+      const g = parseInt(h.substring(2, 4), 16);
+      const b = parseInt(h.substring(4, 6), 16);
+      const nr = Math.round(r + (255 - r) * amount);
+      const ng = Math.round(g + (255 - g) * amount);
+      const nb = Math.round(b + (255 - b) * amount);
+      return `rgb(${nr}, ${ng}, ${nb})`;
+    } catch {
+      return hex;
+    }
+  };
+
   // create a simple SVG pin icon for markers so they look nicer than default
-  const createIcon = (color = '#136F63') => {
+  const createIcon = (color = '#136F63', theme: 'light' | 'dark' = 'light') => {
+    const fill = theme === 'dark' ? lighten(color, 0.45) : color;
     const svg = `
       <svg width="28" height="36" viewBox="0 0 24 34" xmlns="http://www.w3.org/2000/svg">
-        <path d="M12 0C7.03 0 3 4.03 3 9c0 6 9 20 9 20s9-14 9-20c0-4.97-4.03-9-9-9z" fill="${color}" />
+        <path d="M12 0C7.03 0 3 4.03 3 9c0 6 9 20 9 20s9-14 9-20c0-4.97-4.03-9-9-9z" fill="${fill}" />
         <circle cx="12" cy="9" r="3" fill="#ffffff" />
       </svg>
     `;
@@ -103,16 +123,24 @@ export function MapView() {
             className="h-full w-full"
           >
             <MapEffect onMap={setMap} />
-            <TileLayer
-              attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-            />
+            {/* Manual base-layer control: auto (follows theme) or force light/dark */}
+            {(() => {
+              const activeTheme: 'light' | 'dark' = baseLayer === 'auto' ? effectiveTheme : baseLayer;
+              const url =
+                activeTheme === 'dark'
+                  ? 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png'
+                  : 'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png';
+              const attribution =
+                '&copy; <a href="https://carto.com/attributions">Carto</a> &amp; OpenStreetMap';
+
+              return <TileLayer key={activeTheme} attribution={attribution} url={url} subdomains={['a', 'b', 'c', 'd']} />;
+            })()}
 
             {mockMarkers.map((marker) => (
               <Marker
                 key={marker.id}
                 position={[marker.lat, marker.lng]}
-                icon={createIcon(categoryColors[marker.category.toLowerCase()] || '#136F63')}
+                icon={createIcon(categoryColors[marker.category.toLowerCase()] || '#136F63', baseLayer === 'auto' ? effectiveTheme : baseLayer)}
                 eventHandlers={{ click: () => setSelectedMarker(marker.id) }}
               >
                 <Popup>

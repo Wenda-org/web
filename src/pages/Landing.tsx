@@ -37,6 +37,7 @@ export function Landing() {
     },
     {
       icon: Map,
+
       title: t('landing.features.destinations.title', 'Gestão de Destinos'),
       description: t('landing.features.destinations.description', 'Gerencie destinos turísticos com interface intuitiva e visual'),
     },
