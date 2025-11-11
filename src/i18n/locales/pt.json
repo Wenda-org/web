@@ -27,6 +27,39 @@
     "settings": "Definições",
     "logout": "Sair"
   },
+  "ml": {
+    "description": "Ferramentas de machine learning para recomendações e previsões",
+    "buttons": {
+      "retrain": "Retrain"
+    },
+    "kpis": {
+      "model_accuracy": "Acurácia do modelo",
+      "recommendations_served": "Recomendações servidas",
+      "active_models": "Modelos ativos"
+    },
+    "forecast": {
+      "title": "Previsão",
+      "province": "Província",
+      "month": "Mês",
+      "year": "Ano",
+      "get": "Obter previsão",
+      "no_data": "Ainda sem previsão",
+      "errors": {
+        "province": "Insira uma província",
+        "month": "O mês deve estar entre 1 e 12",
+        "year": "O ano deve ser o atual ou posterior"
+      }
+    },
+    "confidence_label": "{percent}% confiança",
+    "sample_recommendations": "Recomendações de exemplo",
+    "status": {
+      "pending": "Pendente",
+      "running": "A correr",
+      "finished": "Concluído",
+      "failed": "Falhado"
+    },
+    "training_jobs": "Tarefas de treino"
+  },
   "dashboard": {
     "title": "Painel",
     "welcome": "Bem-vindo",
@@ -69,12 +102,28 @@
   },
   "users": {
     "title": "Utilizadores",
+    "add": "Adicionar utilizador",
     "total": "Total de Utilizadores",
     "active": "Ativos",
     "roles": {
       "admin": "Administrador",
       "editor": "Editor",
       "viewer": "Visualizador"
+    },
+    "table": {
+      "title": "Lista de utilizadores",
+      "name": "Nome",
+      "email": "Email",
+      "role": "Função",
+      "status": "Estado",
+      "last_login": "Último login",
+      "actions": "Ações"
+    },
+    "messages": {
+      "created": "Utilizador criado",
+      "create_failed": "Não foi possível criar o utilizador",
+      "deleted": "Utilizador eliminado",
+      "updated": "Utilizador atualizado"
     }
   },
   "auth": {
@@ -84,6 +133,17 @@
     "forgot_password": "Esqueceu a palavra-passe?",
     "sign_in_google": "Entrar com Google",
     "welcome": "Bem-vindo ao Wenda Admin"
+  },
+  "confirmations": {
+    "delete_user_title": "Eliminar utilizador",
+    "delete_user_description": "Tem a certeza que pretende eliminar este utilizador? Esta ação não pode ser desfeita.",
+    "delete": "Eliminar",
+    "cancel": "Cancelar"
+  },
+  "auth_errors": {
+    "invalid_email": "Por favor insira um email válido.",
+    "short_password": "A palavra-passe deve ter pelo menos 4 caracteres.",
+    "login_failed": "Falha no login. Verifique as suas credenciais."
   },
   "landing": {
     "header": {
