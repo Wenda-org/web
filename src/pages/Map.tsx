@@ -12,9 +12,18 @@ import { Button } from "../components/ui/button";
 import { Badge } from "../components/ui/badge";
 
 // react-leaflet
-import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
+import {
+  MapContainer,
+  TileLayer,
+  Marker,
+  Popup,
+  useMap,
+  LayersControl,
+  LayerGroup,
+} from "react-leaflet";
 import * as L from "leaflet";
 import "leaflet/dist/leaflet.css";
+import { useTheme } from "../contexts/ThemeContext";
 
 const mockMarkers = [
   {
@@ -58,6 +67,11 @@ export function MapView() {
   const { t } = useTranslation();
   const [selectedMarker, setSelectedMarker] = useState<string | null>(null);
   const [map, setMap] = useState<import("leaflet").Map | null>(null);
+  const [userLocation, setUserLocation] = useState<{
+    lat: number;
+    lng: number;
+  } | null>(null);
+  const { theme, effectiveTheme } = useTheme();
 
   // center the map on Luanda (moderate zoom)
   const center: [number, number] = [-8.8383, 13.2344];
@@ -89,6 +103,20 @@ export function MapView() {
     adventure: "#8B008B",
   };
 
+  // MapTiler config
+  // NOTE: The API key was provided by you in the chat. For production, use
+  // environment variables and keep secrets out of source code.
+  const MAPTILER_KEY = "7rqYE9PeuSorkZMuwyJU";
+
+  const MAPTILER_STYLES: Record<string, string> = {
+    streets: "streets",
+    satellite: "satellite",
+    topo: "topo",
+  };
+
+  const buildTileUrl = (styleId: string) =>
+    `https://api.maptiler.com/maps/${styleId}/256/{z}/{x}/{y}.png?key=${MAPTILER_KEY}`;
+
   // helper to focus a marker: set view and open a popup programmatically
   const focusMarker = (marker: (typeof mockMarkers)[number]) => {
     if (!map) return;
@@ -99,13 +127,46 @@ export function MapView() {
     }</strong><div style="font-size:12px;color:#6b7280">${marker.lat.toFixed(
       4
     )}, ${marker.lng.toFixed(4)}</div></div>`;
-    // Use the statically imported Leaflet instance (L) instead of dynamic import
-    // to avoid creating duplicate static+dynamic imports which Vite warns about.
+    // Use the statically imported Leaflet instance (L)
     L.popup({ maxWidth: 300 })
       .setLatLng(latlng)
       .setContent(content)
       .openOn(map);
     setSelectedMarker(marker.id);
+  };
+
+  // Haversine distance (meters)
+  const distanceMeters = (
+    lat1: number,
+    lon1: number,
+    lat2: number,
+    lon2: number
+  ) => {
+    const toRad = (v: number) => (v * Math.PI) / 180;
+    const R = 6371000;
+    const dLat = toRad(lat2 - lat1);
+    const dLon = toRad(lon2 - lon1);
+    const a =
+      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+      Math.cos(toRad(lat1)) *
+        Math.cos(toRad(lat2)) *
+        Math.sin(dLon / 2) *
+        Math.sin(dLon / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    return R * c;
+  };
+
+  const locateUser = () => {
+    if (!navigator.geolocation) return;
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        const coords = { lat: pos.coords.latitude, lng: pos.coords.longitude };
+        setUserLocation(coords);
+        if (map) map.setView([coords.lat, coords.lng], 13, { animate: true });
+      },
+      (err) => console.warn("Geolocation error", err),
+      { enableHighAccuracy: true, maximumAge: 60000 }
+    );
   };
 
   // small component used inside MapContainer to get map instance via hook
@@ -132,6 +193,12 @@ export function MapView() {
       m.lng > ANGOLA_BOUNDS.lngMax
   );
 
+  // choose a default style depending on theme (simple heuristic)
+  const defaultStyle =
+    (effectiveTheme || theme) === "dark"
+      ? MAPTILER_STYLES.topo
+      : MAPTILER_STYLES.streets;
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -139,10 +206,19 @@ export function MapView() {
           <h1>{t("nav.map")}</h1>
           <p className="text-muted-foreground mt-1">{t("map.description")}</p>
         </div>
-        <Button className="bg-[#136F63] hover:bg-[#0F5A51] text-white rounded-xl">
-          <Plus className="w-5 h-5 mr-2" />
-          {t("map.add")}
-        </Button>
+        <div className="flex items-center gap-2">
+          <Button
+            className="bg-[#136F63] hover:bg-[#0F5A51] text-white rounded-xl"
+            onClick={() => locateUser()}
+          >
+            <MapPin className="w-5 h-5 mr-2" />
+            {t("map.locate") || "Locate me"}
+          </Button>
+          <Button className="bg-[#136F63] hover:bg-[#0F5A51] text-white rounded-xl">
+            <Plus className="w-5 h-5 mr-2" />
+            {t("map.add")}
+          </Button>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -154,30 +230,75 @@ export function MapView() {
             className="h-full w-full"
           >
             <MapEffect onMap={setMap} />
-            <TileLayer
-              attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-            />
+            <LayersControl position="topright">
+              <LayersControl.BaseLayer checked name="Streets">
+                <TileLayer
+                  attribution="&copy; MapTiler &copy; OpenStreetMap contributors"
+                  url={buildTileUrl(MAPTILER_STYLES.streets)}
+                />
+              </LayersControl.BaseLayer>
 
-            {mockMarkers.map((marker) => (
-              <Marker
-                key={marker.id}
-                position={[marker.lat, marker.lng]}
-                icon={createIcon(
-                  categoryColors[marker.category.toLowerCase()] || "#136F63"
+              <LayersControl.BaseLayer name="Satellite">
+                <TileLayer
+                  attribution="&copy; MapTiler &copy; OpenStreetMap contributors"
+                  url={buildTileUrl(MAPTILER_STYLES.satellite)}
+                />
+              </LayersControl.BaseLayer>
+
+              <LayersControl.BaseLayer name="Topographic">
+                <TileLayer
+                  attribution="&copy; MapTiler &copy; OpenStreetMap contributors"
+                  url={buildTileUrl(MAPTILER_STYLES.topo)}
+                />
+              </LayersControl.BaseLayer>
+
+              <LayerGroup>
+                {mockMarkers.map((marker) => (
+                  <Marker
+                    key={marker.id}
+                    position={[marker.lat, marker.lng]}
+                    icon={createIcon(
+                      categoryColors[marker.category.toLowerCase()] || "#136F63"
+                    )}
+                    eventHandlers={{
+                      click: () => setSelectedMarker(marker.id),
+                    }}
+                  >
+                    <Popup>
+                      <div>
+                        <strong>{marker.name}</strong>
+                        <div className="text-sm text-muted-foreground">
+                          {marker.lat.toFixed(4)}, {marker.lng.toFixed(4)}
+                        </div>
+                        {userLocation && (
+                          <div className="text-sm text-muted-foreground mt-1">
+                            Distance:{" "}
+                            {(
+                              distanceMeters(
+                                userLocation.lat,
+                                userLocation.lng,
+                                marker.lat,
+                                marker.lng
+                              ) / 1000
+                            ).toFixed(2)}{" "}
+                            km
+                          </div>
+                        )}
+                      </div>
+                    </Popup>
+                  </Marker>
+                ))}
+
+                {userLocation && (
+                  <Marker
+                    position={[userLocation.lat, userLocation.lng]}
+                    icon={createIcon("#1f7ed0")}
+                  >
+                    <Popup>You are here</Popup>
+                  </Marker>
                 )}
-                eventHandlers={{ click: () => setSelectedMarker(marker.id) }}
-              >
-                <Popup>
-                  <div>
-                    <strong>{marker.name}</strong>
-                    <div className="text-sm text-muted-foreground">
-                      {marker.lat.toFixed(4)}, {marker.lng.toFixed(4)}
-                    </div>
-                  </div>
-                </Popup>
-              </Marker>
-            ))}
+              </LayerGroup>
+            </LayersControl>
           </MapContainer>
         </Card>
 
