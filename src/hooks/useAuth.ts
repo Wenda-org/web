@@ -28,7 +28,18 @@ export function useAuth() {
   }, []);
 
   useEffect(() => {
-    loadProfile();
+    // Only attempt to load the profile if an auth token exists.
+    // This prevents an infinite loop where the app redirects to /login
+    // and the Login page (which also uses this hook) triggers another
+    // /auth/me request that returns 401 and causes another redirect.
+    try {
+      const token = localStorage.getItem("authToken");
+      if (token) {
+        loadProfile();
+      }
+    } catch (e) {
+      // localStorage may be unavailable in some environments — skip loading
+    }
   }, [loadProfile]);
 
   const login = useCallback(
