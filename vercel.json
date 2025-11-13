@@ -1,5 +1,13 @@
 {
   "builds": [{ "src": "package.json", "use": "@vercel/static-build" }],
   "outputDirectory": "dist",
-  "rewrites": [{ "source": "^(?:/.*)?$", "destination": "/index.html" }]
+  "routes": [
+    { "handle": "filesystem" },
+    // Proxy API requests to the backend to avoid CORS issues from the browser.
+    {
+      "src": "/api/(.*)",
+      "dest": "https://backend-core-v42h.onrender.com/api/$1"
+    },
+    { "src": "/(.*)", "dest": "/index.html" }
+  ]
 }
