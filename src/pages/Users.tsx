@@ -41,12 +41,21 @@ export function Users() {
   const { t } = useTranslation();
   const {
     items: users,
+    meta,
     loading,
     error,
     refetch,
     create,
     remove,
     update,
+    query,
+    setQuery,
+    role,
+    setRole,
+    page,
+    setPage,
+    perPage,
+    setPerPage,
   } = useUsers();
 
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
@@ -111,10 +120,48 @@ export function Users() {
         <CardHeader>
           <div className="flex items-center justify-between">
             <CardTitle>{t("users.table.title")}</CardTitle>
-            <SearchBar
-              placeholder={t("common.search_users_placeholder")}
-              className="w-80"
-            />
+            <div className="flex items-center gap-3">
+              <SearchBar
+                placeholder={t("common.search_users_placeholder")}
+                className="w-80"
+                value={query}
+                onChange={(v) => {
+                  setQuery(v);
+                  setPage(1);
+                }}
+              />
+
+              <select
+                value={role ?? ""}
+                onChange={(e) => {
+                  const val = e.target.value;
+                  setRole(val === "" ? undefined : val);
+                  setPage(1);
+                }}
+                className="rounded-xl border border-border px-3 py-2 bg-input-background"
+              >
+                <option value="">{t("users.filters.all") || "All"}</option>
+                <option value="admin">
+                  {t("users.roles.admin") || "Admin"}
+                </option>
+                <option value="user">{t("users.roles.user") || "User"}</option>
+              </select>
+
+              <select
+                value={perPage}
+                onChange={(e) => {
+                  const v = Number(e.target.value) || 25;
+                  setPerPage(v);
+                  setPage(1);
+                }}
+                className="rounded-xl border border-border px-3 py-2 bg-input-background"
+              >
+                <option value={10}>10</option>
+                <option value={25}>25</option>
+                <option value={50}>50</option>
+                <option value={100}>100</option>
+              </select>
+            </div>
           </div>
         </CardHeader>
         <CardContent>
@@ -222,6 +269,49 @@ export function Users() {
             </TableBody>
           </Table>
         </CardContent>
+        <div className="flex items-center justify-end gap-3 p-4 border-t border-border">
+          <div className="text-sm text-muted-foreground">
+            {meta && meta.total
+              ? `${meta.total} ${t("users.total_label") || "users"}`
+              : null}
+          </div>
+          <div className="flex items-center gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setPage(Math.max(1, page - 1))}
+              disabled={page <= 1}
+            >
+              {t("common.prev") || "Prev"}
+            </Button>
+            <div className="px-3 text-sm">
+              {t("common.page") || "Page"} {page}
+              {meta && (meta.total || meta.totalItems) ? (
+                <span>
+                  {" "}
+                  {t("common.of") || "of"}{" "}
+                  {meta.totalPages ??
+                    Math.ceil((meta.total ?? meta.totalItems) / perPage)}
+                </span>
+              ) : null}
+            </div>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setPage(page + 1)}
+              disabled={
+                meta &&
+                (meta.totalPages
+                  ? page >= meta.totalPages
+                  : meta.total &&
+                    page >=
+                      Math.ceil((meta.total ?? meta.totalItems) / perPage))
+              }
+            >
+              {t("common.next") || "Next"}
+            </Button>
+          </div>
+        </div>
       </Card>
 
       {/* View / Edit Dialogs (now using dedicated components) */}

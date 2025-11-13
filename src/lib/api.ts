@@ -381,7 +381,19 @@ const apiClient: Partial<ApiClientMethods> & Record<string, any> = {
   // Users
   async getUsers(params?: { q?: string; page?: number; perPage?: number }) {
     try {
+      // Debug: log request params to help diagnose missing users
+      try {
+        // eslint-disable-next-line no-console
+        console.debug("apiClient.getUsers params:", params);
+      } catch (e) {}
       const res = await instance.get("/users", { params });
+      try {
+        // eslint-disable-next-line no-console
+        console.debug(
+          "apiClient.getUsers raw response:",
+          res && res.data ? res.data : res
+        );
+      } catch (e) {}
       return handleResponse<any>(res);
     } catch (e) {
       handleError(e);
