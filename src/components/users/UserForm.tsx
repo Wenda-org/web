@@ -9,7 +9,8 @@ export type User = {
   id?: string;
   name: string;
   email: string;
-  role: "admin" | "editor" | "viewer" | string;
+  phone?: string;
+  role: "admin" | "user" | string;
   status?: "active" | "inactive" | string;
   lastLogin?: string;
 };
@@ -37,19 +38,28 @@ export default function UserForm({
 }: Props) {
   const [name, setName] = useState(initial.name || "");
   const [email, setEmail] = useState(initial.email || "");
-  const [role, setRole] = useState<User["role"]>(initial.role || "viewer");
+  const [phone, setPhone] = useState(initial.phone || "");
+  const [role, setRole] = useState<User["role"]>(initial.role || "user");
   const [status, setStatus] = useState<User["status"]>(
     initial.status || "active"
   );
 
-  const [errors, setErrors] = useState<{ name?: string; email?: string }>({});
+  const [errors, setErrors] = useState<{ name?: string; email?: string; phone?: string }>({});
   const [loading, setLoading] = useState(false);
 
   function validate() {
-    const e: { name?: string; email?: string } = {};
+    const e: { name?: string; email?: string; phone?: string } = {};
     if (!name || !name.trim()) e.name = "Name is required";
+    if (name && name.trim().length > 100) e.name = "Name is too long (max 100 chars)";
     const emailRe = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
     if (!email || !emailRe.test(email)) e.email = "Please enter a valid email";
+    if (email && email.length > 254) e.email = "Email is too long";
+    // optional phone validation: allow digits, spaces, +, -, parentheses; require at least 6 digits when provided
+    if (phone && phone.trim()) {
+      if (phone.length > 20) e.phone = "Phone is too long (max 20 chars)";
+      const digits = (phone.match(/\d/g) || []).length;
+      if (digits < 6) e.phone = "Please enter a valid phone number";
+    }
     setErrors(e);
     return Object.keys(e).length === 0;
   }
@@ -64,6 +74,7 @@ export default function UserForm({
         id: initial.id,
         name: name.trim(),
         email: email.trim(),
+        phone: phone.trim() || undefined,
         role,
         status,
       });
@@ -81,6 +92,8 @@ export default function UserForm({
           value={name}
           onChange={(e) => setName(e.target.value)}
           disabled={disabled}
+          maxLength={100}
+          aria-label="Name"
         />
         {errors.name && (
           <p className="text-destructive text-sm mt-1">{errors.name}</p>
@@ -93,9 +106,28 @@ export default function UserForm({
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           disabled={disabled}
+          type="email"
+          maxLength={254}
+          aria-label="Email"
         />
         {errors.email && (
           <p className="text-destructive text-sm mt-1">{errors.email}</p>
+        )}
+      </div>
+
+      <div>
+        <Label>Phone</Label>
+        <Input
+          value={phone}
+          onChange={(e) => setPhone(e.target.value)}
+          disabled={disabled}
+          type="tel"
+          maxLength={20}
+          placeholder="+55 12 3456-7890"
+          aria-label="Phone"
+        />
+        {errors.phone && (
+          <p className="text-destructive text-sm mt-1">{errors.phone}</p>
         )}
       </div>
 
@@ -108,8 +140,7 @@ export default function UserForm({
           disabled={disabled}
         >
           <option value="admin">Admin</option>
-          <option value="editor">Editor</option>
-          <option value="viewer">Viewer</option>
+          <option value="user">User</option>
         </select>
       </div>
 

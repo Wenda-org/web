@@ -502,6 +502,19 @@ const apiClient: Partial<ApiClientMethods> & Record<string, any> = {
   },
 };
 
+// Prefer src/api/users.ts helpers where available; re-export them for compatibility
+import * as usersApi from "../api/users";
+
+// copy users exports onto apiClient so older code using apiClient.getUsers still works
+Object.assign(apiClient, {
+  getUsers: usersApi.listUsers,
+  getUser: usersApi.getUser,
+  createUser: usersApi.createUser,
+  updateUser: usersApi.updateUser,
+  updateUserPassword: usersApi.changePassword,
+  deleteUser: usersApi.deleteUser,
+});
+
 export default apiClient as ApiClientMethods & {
   getMarkers: (params?: {
     bbox?: string;
