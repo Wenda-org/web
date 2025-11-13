@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { notifyError } from "./components/ui/notification";
+import { useAuth } from "./hooks/useAuth";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import { Layout } from "./components/layout/Layout";
 import { Landing } from "./pages/Landing";
@@ -10,6 +11,7 @@ import { Dashboard } from "./pages/Dashboard";
 import { Destinations } from "./pages/Destinations";
 import { MapView } from "./pages/Map";
 import { Users } from "./pages/Users";
+import DebugApi from "./pages/DebugApi";
 import { ML } from "./pages/ML";
 import { Monitoring } from "./pages/Monitoring";
 import { Notifications } from "./pages/Notifications";
@@ -20,20 +22,45 @@ import "./styles/globals.css";
 export default function App() {
   function AuthExpiredHandler() {
     const navigate = useNavigate();
+    const { logout } = useAuth();
     useEffect(() => {
-      const handler = (e: any) => {
-        // Optionally show a toast/message and then navigate to login
+      const handler = async (e: any) => {
+        try {
+          // Run the shared logout flow which clears tokens and notifies the app
+          await logout();
+        } catch (err) {
+          // ignore
+        }
         try {
           notifyError("Session expired. Please login again.");
         } catch (err) {
           // ignore
         }
-        navigate("/login");
+        // Ensure user lands on the login page
+        try {
+          navigate("/login");
+        } catch (err) {
+          // ignore
+        }
       };
       window.addEventListener("auth:expired", handler as EventListener);
-      return () =>
+      const logoutHandler = (e: any) => {
+        try {
+          notifyError("You have been logged out.");
+        } catch (err) {}
+        try {
+          navigate("/login");
+        } catch (err) {}
+      };
+      window.addEventListener("auth:logout", logoutHandler as EventListener);
+      return () => {
         window.removeEventListener("auth:expired", handler as EventListener);
-    }, [navigate]);
+        window.removeEventListener(
+          "auth:logout",
+          logoutHandler as EventListener
+        );
+      };
+    }, [navigate, logout]);
     return null;
   }
   return (
@@ -72,6 +99,14 @@ export default function App() {
             element={
               <Layout>
                 <Users />
+              </Layout>
+            }
+          />
+          <Route
+            path="/debug"
+            element={
+              <Layout>
+                <DebugApi />
               </Layout>
             }
           />

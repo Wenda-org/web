@@ -6,6 +6,7 @@ import {
   DialogTitle,
   DialogDescription,
 } from "../ui/dialog";
+import { Loader2 } from "lucide-react";
 // SimpleModal removed usage here; rely on Radix Dialog
 import UserForm, { User } from "./UserForm";
 
@@ -24,12 +25,29 @@ export default function EditUser({
   onSubmit,
   onCancel,
 }: Props) {
+  const [isSaving, setIsSaving] = React.useState(false);
   return (
     <>
-      <Dialog open={open} onOpenChange={onOpenChange}>
+      <Dialog
+        open={open}
+        onOpenChange={(val: boolean) => {
+          // prevent closing while save in progress
+          if (isSaving) return;
+          onOpenChange(val);
+        }}
+      >
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Edit user</DialogTitle>
+            <DialogTitle>
+              {isSaving ? (
+                <span className="inline-flex items-center gap-2">
+                  <Loader2 className="animate-spin w-4 h-4" aria-hidden />
+                  Saving...
+                </span>
+              ) : (
+                "Edit user"
+              )}
+            </DialogTitle>
             <DialogDescription className="text-sm text-muted-foreground">
               Edit user details
             </DialogDescription>
@@ -39,6 +57,8 @@ export default function EditUser({
               initial={initial}
               onSubmit={onSubmit}
               onCancel={onCancel}
+              disabled={isSaving}
+              onLoadingChange={(l) => setIsSaving(l)}
             />
           )}
         </DialogContent>

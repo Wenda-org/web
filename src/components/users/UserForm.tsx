@@ -20,6 +20,10 @@ type Props = {
   submitLabel?: string;
   onCancel?: () => void;
   className?: string;
+  // optional: notify parent when form is performing async submit
+  onLoadingChange?: (loading: boolean) => void;
+  // optional: externally disable the form (used to prevent closing while saving)
+  disabled?: boolean;
 };
 
 export default function UserForm({
@@ -28,6 +32,8 @@ export default function UserForm({
   submitLabel = "Save",
   onCancel,
   className,
+  onLoadingChange,
+  disabled = false,
 }: Props) {
   const [name, setName] = useState(initial.name || "");
   const [email, setEmail] = useState(initial.email || "");
@@ -52,6 +58,7 @@ export default function UserForm({
     e?.preventDefault();
     if (!validate()) return;
     setLoading(true);
+    onLoadingChange?.(true);
     try {
       await onSubmit({
         id: initial.id,
@@ -62,6 +69,7 @@ export default function UserForm({
       });
     } finally {
       setLoading(false);
+      onLoadingChange?.(false);
     }
   }
 
@@ -69,7 +77,11 @@ export default function UserForm({
     <form className={cn("space-y-4", className)} onSubmit={handleSubmit}>
       <div>
         <Label>Name</Label>
-        <Input value={name} onChange={(e) => setName(e.target.value)} />
+        <Input
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          disabled={disabled}
+        />
         {errors.name && (
           <p className="text-destructive text-sm mt-1">{errors.name}</p>
         )}
@@ -77,7 +89,11 @@ export default function UserForm({
 
       <div>
         <Label>Email</Label>
-        <Input value={email} onChange={(e) => setEmail(e.target.value)} />
+        <Input
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          disabled={disabled}
+        />
         {errors.email && (
           <p className="text-destructive text-sm mt-1">{errors.email}</p>
         )}
@@ -89,6 +105,7 @@ export default function UserForm({
           value={role}
           onChange={(e) => setRole(e.target.value)}
           className="w-full rounded-md border px-3 py-2"
+          disabled={disabled}
         >
           <option value="admin">Admin</option>
           <option value="editor">Editor</option>
@@ -102,6 +119,7 @@ export default function UserForm({
           value={status}
           onChange={(e) => setStatus(e.target.value)}
           className="w-full rounded-md border px-3 py-2"
+          disabled={disabled}
         >
           <option value="active">Active</option>
           <option value="inactive">Inactive</option>
@@ -110,11 +128,16 @@ export default function UserForm({
 
       <div className="flex items-center gap-2 justify-end">
         {onCancel && (
-          <Button variant="ghost" onClick={onCancel} type="button">
+          <Button
+            variant="ghost"
+            onClick={onCancel}
+            type="button"
+            disabled={disabled}
+          >
             Cancel
           </Button>
         )}
-        <LoadingButton type="submit" isLoading={loading}>
+        <LoadingButton type="submit" isLoading={loading} disabled={disabled}>
           {submitLabel}
         </LoadingButton>
       </div>

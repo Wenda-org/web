@@ -17,7 +17,12 @@ const url = getApiBaseUrl();
 // Ensure the API client points to the `/api` prefix on the backend.
 // Some backends serve endpoints under https://host/api/..., so append
 // `/api` if it's not already present.
-const apiBase = url.replace(/\/*$/, "") + "/api";
+// Normalize base and append `/api` only when it's not already present to avoid
+// accidental double `/api/api` when the env or local override already contains it.
+const baseNoSlash = url.replace(/\/*$/, "");
+const apiBase = baseNoSlash.endsWith("/api")
+  ? baseNoSlash
+  : baseNoSlash + "/api";
 
 export const apiBaseUrl = apiBase;
 

@@ -63,7 +63,25 @@ export function useAuth() {
     } catch (e) {
       // ignore logout errors but ensure local cleanup
     } finally {
+      // Ensure client-side cleanup even if server logout fails
+      try {
+        setAuthToken(null);
+      } catch (err) {
+        // ignore
+      }
+      try {
+        localStorage.removeItem("user");
+      } catch (err) {}
+      try {
+        localStorage.removeItem("role");
+      } catch (err) {}
       setUser(null);
+      // notify the app that logout happened
+      try {
+        window.dispatchEvent(new CustomEvent("auth:logout"));
+      } catch (err) {
+        // ignore
+      }
     }
   }, []);
 

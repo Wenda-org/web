@@ -5,7 +5,6 @@ import { Button } from "../ui/button";
 import "../../i18n/config";
 import LogoBola from "../../public/images/logo/logo-bola.png";
 import { useState } from "react";
-import ConfirmDialog from "../ui/confirm-dialog";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -98,25 +97,10 @@ export function Topbar() {
           variant="ghost"
           size="icon"
           className="rounded-xl"
-          onClick={() => setConfirmOpen(true)}
+          onClick={handleLogout}
         >
           <LogOut className="w-5 h-5" />
         </Button>
-
-        <ConfirmDialog
-          open={confirmOpen}
-          onOpenChange={setConfirmOpen}
-          title={t("auth.logout") || "Logout"}
-          description={
-            t("auth.logout_confirm") || "Do you really want to logout?"
-          }
-          confirmLabel={t("auth.logout") || "Logout"}
-          cancelLabel={t("common.cancel") || "Cancel"}
-          intent="destructive"
-          onConfirm={async () => {
-            await handleLogout();
-          }}
-        />
       </div>
     </header>
   );

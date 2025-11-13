@@ -37,45 +37,10 @@ import {
 } from "../components/ui/dialog";
 import { notifySuccess, notifyError } from "../components/ui/notification";
 
-const mockUsers = [
-  {
-    id: "1",
-    name: "João Silva",
-    email: "joao.silva@email.com",
-    role: "admin",
-    status: "active",
-    lastLogin: "2 hours ago",
-  },
-  {
-    id: "2",
-    name: "Maria Santos",
-    email: "maria.santos@email.com",
-    role: "editor",
-    status: "active",
-    lastLogin: "5 hours ago",
-  },
-  {
-    id: "3",
-    name: "Pedro Costa",
-    email: "pedro.costa@email.com",
-    role: "viewer",
-    status: "active",
-    lastLogin: "1 day ago",
-  },
-  {
-    id: "4",
-    name: "Ana Ferreira",
-    email: "ana.ferreira@email.com",
-    role: "editor",
-    status: "inactive",
-    lastLogin: "3 days ago",
-  },
-];
-
 export function Users() {
   const { t } = useTranslation();
   const {
-    items: apiUsers,
+    items: users,
     loading,
     error,
     refetch,
@@ -84,29 +49,12 @@ export function Users() {
     update,
   } = useUsers();
 
-  const [users, setUsers] = useState<User[]>(mockUsers);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [isEditOpen, setIsEditOpen] = useState(false);
 
   // sync API users into local UI shape when available
-  React.useEffect(() => {
-    if (apiUsers && apiUsers.length) {
-      // map LocalUser -> component User shape
-      const mapped = apiUsers.map(
-        (u: LocalUser) =>
-          ({
-            id: u.id,
-            name: u.name,
-            email: u.email,
-            role: (u.role as any) || "viewer",
-            status: (u.status as any) || "active",
-            lastLogin: u.lastLogin,
-          } as User)
-      );
-      setUsers(mapped);
-    }
-  }, [apiUsers]);
+  // users are provided by the `useUsers` hook (normalized LocalUser[])
 
   return (
     <div className="space-y-6">
@@ -123,7 +71,6 @@ export function Users() {
             </Button>
           }
           onCreate={async (u: User) => {
-            // try creating via API, fallback to local mock
             try {
               await create({
                 name: u.name,
@@ -133,12 +80,11 @@ export function Users() {
               } as any);
               await refetch();
               notifySuccess(t("users.messages.created") || "User created");
-            } catch (err) {
-              // fallback to local state
-              const id = u.id ?? Date.now().toString();
-              setUsers((prev) => [{ ...u, id }, ...prev]);
+            } catch (err: any) {
               notifyError(
-                t("users.messages.create_failed") || "Could not create user"
+                t("users.messages.create_failed") ||
+                  String(err) ||
+                  "Could not create user"
               );
             }
           }}
@@ -184,73 +130,95 @@ export function Users() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {users.map((user) => (
-                <TableRow key={user.id}>
-                  <TableCell>{user.name}</TableCell>
-                  <TableCell className="text-muted-foreground">
-                    {user.email}
-                  </TableCell>
-                  <TableCell>
-                    <Badge
-                      variant={user.role === "admin" ? "default" : "secondary"}
-                      className="rounded-lg"
-                    >
-                      {t(`users.roles.${user.role}`)}
-                    </Badge>
-                  </TableCell>
-                  <TableCell>
-                    <Badge
-                      variant={
-                        user.status === "active" ? "default" : "secondary"
-                      }
-                      className={`rounded-lg ${
-                        user.status === "active"
-                          ? "bg-[#06D6A0] hover:bg-[#06D6A0]/90"
-                          : "bg-muted"
-                      }`}
-                    >
-                      {t(`users.${user.status}`) || user.status}
-                    </Badge>
-                  </TableCell>
-                  <TableCell className="text-muted-foreground">
-                    {user.lastLogin ?? "-"}
-                  </TableCell>
-                  <TableCell>
-                    <UserActions
-                      userId={user.id ?? ""}
-                      onView={(id) => {
-                        const u = users.find((x) => x.id === id);
-                        if (u) {
-                          setSelectedUser(u);
-                          setIsProfileOpen(true);
-                        }
-                      }}
-                      onEdit={(id) => {
-                        const u = users.find((x) => x.id === id);
-                        if (u) {
-                          setSelectedUser(u);
-                          setIsEditOpen(true);
-                        }
-                      }}
-                      onDelete={async (id: string) => {
-                        try {
-                          await remove(id);
-                          await refetch();
-                          notifySuccess(
-                            t("users.messages.deleted") || "User deleted"
-                          );
-                        } catch (err) {
-                          // fallback: remove locally
-                          setUsers((prev) => prev.filter((x) => x.id !== id));
-                          notifyError(
-                            t("users.messages.delete_failed") || String(err)
-                          );
-                        }
-                      }}
-                    />
+              {loading ? (
+                <TableRow>
+                  <TableCell
+                    colSpan={6}
+                    className="text-center text-muted-foreground py-6"
+                  >
+                    {t("loading") || "A carregar..."}
                   </TableCell>
                 </TableRow>
-              ))}
+              ) : users.length === 0 ? (
+                <TableRow>
+                  <TableCell
+                    colSpan={6}
+                    className="text-center text-muted-foreground py-6"
+                  >
+                    {t("users.no_results") || "Nenhum usuário encontrado"}
+                  </TableCell>
+                </TableRow>
+              ) : (
+                users.map((user) => (
+                  <TableRow key={user.id}>
+                    <TableCell>{user.name}</TableCell>
+                    <TableCell className="text-muted-foreground">
+                      {user.email}
+                    </TableCell>
+                    <TableCell>
+                      <Badge
+                        variant={
+                          user.role === "admin" ? "default" : "secondary"
+                        }
+                        className="rounded-lg"
+                      >
+                        {t(`users.roles.${user.role}`)}
+                      </Badge>
+                    </TableCell>
+                    <TableCell>
+                      <Badge
+                        variant={
+                          user.status === "active" ? "default" : "secondary"
+                        }
+                        className={`rounded-lg ${
+                          user.status === "active"
+                            ? "bg-[#06D6A0] hover:bg-[#06D6A0]/90"
+                            : "bg-muted"
+                        }`}
+                      >
+                        {t(`users.${user.status}`) || user.status}
+                      </Badge>
+                    </TableCell>
+                    <TableCell className="text-muted-foreground">
+                      {user.lastLogin ?? "-"}
+                    </TableCell>
+                    <TableCell>
+                      <UserActions
+                        userId={user.id ?? ""}
+                        onView={(id) => {
+                          const u = users.find((x) => x.id === id);
+                          if (u) {
+                            setSelectedUser(u as User);
+                            setIsProfileOpen(true);
+                          }
+                        }}
+                        onEdit={(id) => {
+                          const u = users.find((x) => x.id === id);
+                          if (u) {
+                            setSelectedUser(u as User);
+                            setIsEditOpen(true);
+                          }
+                        }}
+                        onDelete={async (id: string) => {
+                          try {
+                            await remove(id);
+                            await refetch();
+                            notifySuccess(
+                              t("users.messages.deleted") || "User deleted"
+                            );
+                          } catch (err: any) {
+                            notifyError(
+                              t("users.messages.delete_failed") ||
+                                String(err) ||
+                                "Could not delete user"
+                            );
+                          }
+                        }}
+                      />
+                    </TableCell>
+                  </TableRow>
+                ))
+              )}
             </TableBody>
           </Table>
         </CardContent>
@@ -261,10 +229,19 @@ export function Users() {
         open={isProfileOpen}
         onOpenChange={(open) => setIsProfileOpen(open)}
         user={selectedUser}
-        onSave={(u: User) => {
-          setUsers((prev) => prev.map((x) => (x.id === u.id ? u : x)));
-          setIsProfileOpen(false);
-          notifySuccess(t("users.messages.updated") || "User updated");
+        onSave={async (u: User) => {
+          // refresh from API to keep UI in sync
+          try {
+            await refetch();
+            setIsProfileOpen(false);
+            notifySuccess(t("users.messages.updated") || "User updated");
+          } catch (err: any) {
+            notifyError(
+              t("users.messages.update_failed") ||
+                String(err) ||
+                "Could not update user"
+            );
+          }
         }}
         onCancel={() => setIsProfileOpen(false)}
       />
@@ -273,12 +250,27 @@ export function Users() {
         open={isEditOpen}
         onOpenChange={(open) => setIsEditOpen(open)}
         initial={selectedUser}
-        onSubmit={(payload: User) => {
-          setUsers((prev) =>
-            prev.map((x) => (x.id === payload.id ? { ...x, ...payload } : x))
-          );
-          setIsEditOpen(false);
-          notifySuccess(t("users.messages.updated") || "User updated");
+        onSubmit={async (payload: User) => {
+          try {
+            if (payload.id) {
+              await update(payload.id, {
+                name: payload.name,
+                email: payload.email,
+                role: payload.role,
+                isActive: payload.status === "active",
+              } as any);
+              await refetch();
+              notifySuccess(t("users.messages.updated") || "User updated");
+            }
+          } catch (err: any) {
+            notifyError(
+              t("users.messages.update_failed") ||
+                String(err) ||
+                "Could not update user"
+            );
+          } finally {
+            setIsEditOpen(false);
+          }
         }}
         onCancel={() => setIsEditOpen(false)}
       />
