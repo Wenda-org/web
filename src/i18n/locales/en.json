@@ -21,11 +21,13 @@
     "destinations": "Destinations",
     "map": "Map",
     "users": "Users",
-    "ml": "Recommendations",
+    "ml": "Models",
     "monitoring": "Monitoring",
     "notifications": "Notifications",
     "settings": "Settings",
-    "logout": "Logout"
+    "logout": "Logout",
+    "admin_user": "Admin User",
+    "admin_email": "admin@wenda.ao"
   },
   "ml": {
     "description": "Machine learning tools for recommendations and forecasts",
@@ -123,7 +125,37 @@
       "created": "User created",
       "create_failed": "Could not create user",
       "deleted": "User deleted",
-      "updated": "User updated"
+      "delete_failed": "Could not delete user",
+      "updated": "User updated",
+      "update_failed": "Could not update user"
+    },
+    "form": {
+      "add_title": "Add user",
+      "add_description": "Create a new user",
+      "edit_title": "Edit user",
+      "edit_description": "Edit user details",
+      "saving": "Saving...",
+      "name": "Name",
+      "email": "Email",
+      "phone": "Phone",
+      "role": "Role",
+      "status": "Status",
+      "admin": "Admin",
+      "user": "User",
+      "active": "Active",
+      "inactive": "Inactive",
+      "create": "Create",
+      "save": "Save",
+      "cancel": "Cancel",
+      "close": "Close",
+      "validation": {
+        "name_required": "Name is required",
+        "name_too_long": "Name is too long (max 100 chars)",
+        "email_invalid": "Please enter a valid email",
+        "email_too_long": "Email is too long",
+        "phone_too_long": "Phone is too long (max 20 chars)",
+        "phone_invalid": "Please enter a valid phone number"
+      }
     }
   },
   "auth": {

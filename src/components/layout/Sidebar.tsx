@@ -1,6 +1,6 @@
-import { NavLink } from 'react-router-dom';
-import { useTranslation } from 'react-i18next';
-import { useEffect, useState } from 'react';
+import { NavLink } from "react-router-dom";
+import { useTranslation } from "react-i18next";
+import { useEffect, useState } from "react";
 import {
   LayoutDashboard,
   MapPin,
@@ -12,28 +12,28 @@ import {
   Settings,
   ChevronLeft,
   ChevronRight,
-} from 'lucide-react';
-import '../../i18n/config';
-import LogoBola from '../../public/images/logo/logo-bola.png';
-import LogoFull from '../../public/images/logo/logo.png';
+} from "lucide-react";
+import "../../i18n/config";
+import LogoBola from "../../public/images/logo/logo-bola.png";
+import LogoFull from "../../public/images/logo/logo.png";
 
 const navItems = [
-  { to: '/dashboard', icon: LayoutDashboard, label: 'nav.dashboard' },
-  { to: '/destinations', icon: MapPin, label: 'nav.destinations' },
-  { to: '/map', icon: Map, label: 'nav.map' },
-  { to: '/users', icon: Users, label: 'nav.users' },
-  { to: '/ml', icon: Brain, label: 'nav.ml' },
-  { to: '/monitoring', icon: Activity, label: 'nav.monitoring' },
-  { to: '/notifications', icon: Bell, label: 'nav.notifications' },
-  { to: '/settings', icon: Settings, label: 'nav.settings' },
+  { to: "/dashboard", icon: LayoutDashboard, label: "nav.dashboard" },
+  { to: "/destinations", icon: MapPin, label: "nav.destinations" },
+  { to: "/map", icon: Map, label: "nav.map" },
+  { to: "/users", icon: Users, label: "nav.users" },
+  { to: "/ml", icon: Brain, label: "nav.ml" },
+  { to: "/monitoring", icon: Activity, label: "nav.monitoring" },
+  { to: "/notifications", icon: Bell, label: "nav.notifications" },
+  { to: "/settings", icon: Settings, label: "nav.settings" },
 ];
 
 export function Sidebar() {
   const { t } = useTranslation();
   const [collapsed, setCollapsed] = useState<boolean>(() => {
     try {
-      const raw = localStorage.getItem('sidebar-collapsed');
-      return raw === 'true';
+      const raw = localStorage.getItem("sidebar-collapsed");
+      return raw === "true";
     } catch (e) {
       return false;
     }
@@ -41,7 +41,7 @@ export function Sidebar() {
 
   useEffect(() => {
     try {
-      localStorage.setItem('sidebar-collapsed', String(collapsed));
+      localStorage.setItem("sidebar-collapsed", String(collapsed));
     } catch (e) {
       // ignore
     }
@@ -50,21 +50,37 @@ export function Sidebar() {
   return (
     <aside
       className={`h-screen bg-sidebar border-r border-sidebar-border flex flex-col transition-all duration-200 ${
-        collapsed ? 'w-20' : 'w-64'
+        collapsed ? "w-20" : "w-64"
       }`}
       aria-expanded={!collapsed}
     >
       <div className="p-4 border-b border-sidebar-border flex items-center justify-between">
-        <div className={`flex items-center gap-3 ${collapsed ? 'justify-center w-full' : ''}`}>
-          <img src={LogoFull} alt="Wenda" className={`w-10 h-10 ${collapsed ? 'mx-auto' : ''}`} />
+        <div
+          className={`flex items-center gap-3 ${
+            collapsed ? "justify-center w-full" : ""
+          }`}
+        >
+          <img
+            src={LogoFull}
+            alt="Wenda"
+            className={`w-10 h-10 ${collapsed ? "mx-auto" : ""}`}
+          />
         </div>
 
         <button
           onClick={() => setCollapsed((s) => !s)}
-          aria-label={collapsed ? t('nav.expand', 'Expand sidebar') : t('nav.collapse', 'Collapse sidebar')}
+          aria-label={
+            collapsed
+              ? t("nav.expand", "Expand sidebar")
+              : t("nav.collapse", "Collapse sidebar")
+          }
           className="p-2 rounded-md hover:bg-sidebar-accent/50"
         >
-          {collapsed ? <ChevronRight className="w-4 h-4" /> : <ChevronLeft className="w-4 h-4" />}
+          {collapsed ? (
+            <ChevronRight className="w-4 h-4" />
+          ) : (
+            <ChevronLeft className="w-4 h-4" />
+          )}
         </button>
       </div>
 
@@ -75,10 +91,12 @@ export function Sidebar() {
             to={item.to}
             title={t(item.label)}
             className={({ isActive }) =>
-              `flex items-center ${collapsed ? 'justify-center' : 'gap-3'} px-4 py-3 rounded-xl transition-colors ${
+              `flex items-center ${
+                collapsed ? "justify-center" : "gap-3"
+              } px-4 py-3 rounded-xl transition-colors ${
                 isActive
-                  ? 'bg-sidebar-primary text-sidebar-primary-foreground'
-                  : 'text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground'
+                  ? "bg-sidebar-primary text-sidebar-primary-foreground"
+                  : "text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
               }`
             }
           >
@@ -93,12 +111,18 @@ export function Sidebar() {
       </nav>
 
       <div className="p-4 border-t border-sidebar-border">
-        <div className={`flex items-center gap-3 px-4 py-3 ${collapsed ? 'justify-center' : ''}`}>
+        <div
+          className={`flex items-center gap-3 px-4 py-3 ${
+            collapsed ? "justify-center" : ""
+          }`}
+        >
           <img src={LogoBola} alt="avatar" className="w-8 h-8 rounded-full" />
           {!collapsed && (
             <div className="flex-1 min-w-0">
-              <p className="truncate">Admin User</p>
-              <p className="text-muted-foreground truncate">admin@wenda.ao</p>
+              <p className="truncate">{t("nav.admin_user")}</p>
+              <p className="text-muted-foreground truncate">
+                {t("nav.admin_email")}
+              </p>
             </div>
           )}
         </div>

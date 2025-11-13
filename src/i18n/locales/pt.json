@@ -21,11 +21,13 @@
     "destinations": "Destinos",
     "map": "Mapa",
     "users": "Utilizadores",
-    "ml": "Recomendações",
+    "ml": "Modelos",
     "monitoring": "Monitorização",
     "notifications": "Notificações",
     "settings": "Definições",
-    "logout": "Sair"
+    "logout": "Sair",
+    "admin_user": "Utilizador Admin",
+    "admin_email": "admin@wenda.ao"
   },
   "ml": {
     "description": "Ferramentas de machine learning para recomendações e previsões",
@@ -123,7 +125,37 @@
       "created": "Utilizador criado",
       "create_failed": "Não foi possível criar o utilizador",
       "deleted": "Utilizador eliminado",
-      "updated": "Utilizador atualizado"
+      "delete_failed": "Não foi possível eliminar o utilizador",
+      "updated": "Utilizador atualizado",
+      "update_failed": "Não foi possível atualizar o utilizador"
+    },
+    "form": {
+      "add_title": "Adicionar utilizador",
+      "add_description": "Criar um novo utilizador",
+      "edit_title": "Editar utilizador",
+      "edit_description": "Editar detalhes do utilizador",
+      "saving": "A guardar...",
+      "name": "Nome",
+      "email": "Email",
+      "phone": "Telefone",
+      "role": "Função",
+      "status": "Estado",
+      "admin": "Administrador",
+      "user": "Utilizador",
+      "active": "Ativo",
+      "inactive": "Inativo",
+      "create": "Criar",
+      "save": "Guardar",
+      "cancel": "Cancelar",
+      "close": "Fechar",
+      "validation": {
+        "name_required": "Nome é obrigatório",
+        "name_too_long": "Nome muito longo (máx 100 caracteres)",
+        "email_invalid": "Por favor insira um email válido",
+        "email_too_long": "Email muito longo",
+        "phone_too_long": "Telefone muito longo (máx 20 caracteres)",
+        "phone_invalid": "Por favor insira um número de telefone válido"
+      }
     }
   },
   "auth": {

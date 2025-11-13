@@ -23,7 +23,8 @@ const mockDestinations = [
     rating: 4.8,
     distance: "70 km",
     category: "Beaches",
-    image: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800",
+    image:
+      "https://images.pexels.com/photos/457882/pexels-photo-457882.jpeg?auto=compress&cs=tinysrgb&w=800",
     isFavorite: true,
   },
   {
@@ -33,7 +34,8 @@ const mockDestinations = [
     rating: 4.9,
     distance: "420 km",
     category: "Nature",
-    image: "https://images.unsplash.com/photo-1547036967-23d11aacaee0?w=800",
+    image:
+      "https://images.pexels.com/photos/2559941/pexels-photo-2559941.jpeg?auto=compress&cs=tinysrgb&w=800",
     isFavorite: false,
   },
   {
@@ -43,7 +45,8 @@ const mockDestinations = [
     rating: 4.7,
     distance: "850 km",
     category: "Adventure",
-    image: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800",
+    image:
+      "https://images.pexels.com/photos/417074/pexels-photo-417074.jpeg?auto=compress&cs=tinysrgb&w=800",
     isFavorite: true,
   },
   {
@@ -53,7 +56,8 @@ const mockDestinations = [
     rating: 4.5,
     distance: "5 km",
     category: "Culture",
-    image: "https://images.unsplash.com/photo-1555881675-dd6fb868e4e9?w=800",
+    image:
+      "https://images.pexels.com/photos/208701/pexels-photo-208701.jpeg?auto=compress&cs=tinysrgb&w=800",
     isFavorite: false,
   },
   {
@@ -63,7 +67,8 @@ const mockDestinations = [
     rating: 4.6,
     distance: "45 km",
     category: "Nature",
-    image: "https://images.unsplash.com/photo-1473496169904-658ba7c44d8a?w=800",
+    image:
+      "https://images.pexels.com/photos/3408744/pexels-photo-3408744.jpeg?auto=compress&cs=tinysrgb&w=800",
     isFavorite: false,
   },
   {
@@ -73,7 +78,8 @@ const mockDestinations = [
     rating: 4.4,
     distance: "30 km",
     category: "Beaches",
-    image: "https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=800",
+    image:
+      "https://images.pexels.com/photos/1450353/pexels-photo-1450353.jpeg?auto=compress&cs=tinysrgb&w=800",
     isFavorite: true,
   },
 ];

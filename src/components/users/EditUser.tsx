@@ -1,4 +1,5 @@
 import React from "react";
+import { useTranslation } from "react-i18next";
 import {
   Dialog,
   DialogContent,
@@ -25,6 +26,7 @@ export default function EditUser({
   onSubmit,
   onCancel,
 }: Props) {
+  const { t } = useTranslation();
   const [isSaving, setIsSaving] = React.useState(false);
   return (
     <>
@@ -42,14 +44,14 @@ export default function EditUser({
               {isSaving ? (
                 <span className="inline-flex items-center gap-2">
                   <Loader2 className="animate-spin w-4 h-4" aria-hidden />
-                  Saving...
+                  {t("users.form.saving")}
                 </span>
               ) : (
-                "Edit user"
+                t("users.form.edit_title")
               )}
             </DialogTitle>
             <DialogDescription className="text-sm text-muted-foreground">
-              Edit user details
+              {t("users.form.edit_description")}
             </DialogDescription>
           </DialogHeader>
           {initial && (

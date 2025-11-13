@@ -87,7 +87,9 @@ export function Users() {
                 role: u.role as any,
                 isActive: u.status === "active",
               } as any);
-              await refetch();
+              // ensure the newest user appears immediately by jumping back to page 1
+              setPage(1);
+              await refetch({ page: 1 });
               notifySuccess(t("users.messages.created") || "User created");
             } catch (err: any) {
               notifyError(
@@ -164,8 +166,8 @@ export function Users() {
             </div>
           </div>
         </CardHeader>
-        <CardContent>
-          <Table>
+        <CardContent className="max-h-[70vh] overflow-y-auto overflow-x-auto">
+          <Table className="min-w-[720px]">
             <TableHeader>
               <TableRow>
                 <TableHead>{t("users.table.name")}</TableHead>
