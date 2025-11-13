@@ -14,14 +14,14 @@ import {
   CardTitle,
 } from "../components/ui/card";
 import { useTheme } from "../contexts/ThemeContext";
-import apiLogin from "../api/index.ts";
+import { useAuth } from "../hooks/useAuth";
 import { notifySuccess, notifyError } from "../components/ui/notification";
 
 export function Login() {
   const { t, i18n } = useTranslation();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [loading, setLoading] = useState(false);
+  const { login, loading, error: authError } = useAuth();
   const [error, setError] = useState<string | null>(null);
   const { theme, setTheme, toggleTheme, effectiveTheme } = useTheme();
 
@@ -39,35 +39,36 @@ export function Login() {
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
-    setLoading(true);
 
     if (!email || !email.includes("@")) {
       const msg = t("auth_errors.invalid_email");
       setError(msg);
       notifyError(msg);
-      setLoading(false);
       return;
     }
     if (!password || password.length < 4) {
       const msg = t("auth_errors.short_password");
       setError(msg);
       notifyError(msg);
-      setLoading(false);
       return;
     }
     try {
-      const response = await apiLogin({ email: email, password });
-      if (response) {
-        setLoading(false);
-        notifySuccess(t("auth.login") + " " + "successful");
-        window.location.href = "/dashboard";
+      await login({ email: email, password });
+      // Debug: log stored auth token so we can verify persistence during development
+      try {
+        const token = localStorage.getItem("authToken");
+        // eslint-disable-next-line no-console
+        console.log("[auth] saved token:", token);
+      } catch (e) {
+        // ignore console/storage errors
       }
-    } catch (error) {
-      console.log(error);
+      notifySuccess(t("auth.login") + " " + "successful");
+      window.location.href = "/dashboard";
+    } catch (err) {
+      console.log(err);
       const msg = t("auth_errors.login_failed");
       setError(msg);
       notifyError(msg);
-      setLoading(false);
     }
   };
 

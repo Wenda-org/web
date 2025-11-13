@@ -10,6 +10,8 @@ import {
 import "../i18n/config";
 import { Button } from "../components/ui/button";
 import { Badge } from "../components/ui/badge";
+import { useMarkers } from "../hooks/useMarkers";
+import type { Marker as MapMarker } from "../api.types";
 
 // react-leaflet
 import {
@@ -71,6 +73,11 @@ export function MapView() {
     lat: number;
     lng: number;
   } | null>(null);
+  const {
+    markers,
+    loading: markersLoading,
+    refetch: refetchMarkers,
+  } = useMarkers();
   const { theme, effectiveTheme } = useTheme();
 
   // center the map on Luanda (moderate zoom)
@@ -253,41 +260,47 @@ export function MapView() {
               </LayersControl.BaseLayer>
 
               <LayerGroup>
-                {mockMarkers.map((marker) => (
-                  <Marker
-                    key={marker.id}
-                    position={[marker.lat, marker.lng]}
-                    icon={createIcon(
-                      categoryColors[marker.category.toLowerCase()] || "#136F63"
-                    )}
-                    eventHandlers={{
-                      click: () => setSelectedMarker(marker.id),
-                    }}
-                  >
-                    <Popup>
-                      <div>
-                        <strong>{marker.name}</strong>
-                        <div className="text-sm text-muted-foreground">
-                          {marker.lat.toFixed(4)}, {marker.lng.toFixed(4)}
-                        </div>
-                        {userLocation && (
-                          <div className="text-sm text-muted-foreground mt-1">
-                            Distance:{" "}
-                            {(
-                              distanceMeters(
-                                userLocation.lat,
-                                userLocation.lng,
-                                marker.lat,
-                                marker.lng
-                              ) / 1000
-                            ).toFixed(2)}{" "}
-                            km
+                {(markers && markers.length > 0 ? markers : mockMarkers).map(
+                  (marker: MapMarker | (typeof mockMarkers)[number]) => (
+                    <Marker
+                      key={marker.id}
+                      position={[marker.lat, marker.lng]}
+                      icon={createIcon(
+                        categoryColors[
+                          ((marker as any).category || "").toLowerCase()
+                        ] || "#136F63"
+                      )}
+                      eventHandlers={{
+                        click: () => setSelectedMarker(marker.id),
+                      }}
+                    >
+                      <Popup>
+                        <div>
+                          <strong>
+                            {(marker as any).title ?? (marker as any).name}
+                          </strong>
+                          <div className="text-sm text-muted-foreground">
+                            {marker.lat.toFixed(4)}, {marker.lng.toFixed(4)}
                           </div>
-                        )}
-                      </div>
-                    </Popup>
-                  </Marker>
-                ))}
+                          {userLocation && (
+                            <div className="text-sm text-muted-foreground mt-1">
+                              Distance:{" "}
+                              {(
+                                distanceMeters(
+                                  userLocation.lat,
+                                  userLocation.lng,
+                                  marker.lat,
+                                  marker.lng
+                                ) / 1000
+                              ).toFixed(2)}{" "}
+                              km
+                            </div>
+                          )}
+                        </div>
+                      </Popup>
+                    </Marker>
+                  )
+                )}
 
                 {userLocation && (
                   <Marker

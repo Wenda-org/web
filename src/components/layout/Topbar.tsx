@@ -1,45 +1,54 @@
-import { useTranslation } from 'react-i18next';
-import { Search, Bell, Moon, Sun, Languages, LogOut } from 'lucide-react';
-import { useTheme } from '../../contexts/ThemeContext';
-import { Button } from '../ui/button';
-import '../../i18n/config';
-import LogoBola from '../../public/images/logo/logo-bola.png';
+import { useTranslation } from "react-i18next";
+import { Search, Bell, Moon, Sun, Languages, LogOut } from "lucide-react";
+import { useTheme } from "../../contexts/ThemeContext";
+import { Button } from "../ui/button";
+import "../../i18n/config";
+import LogoBola from "../../public/images/logo/logo-bola.png";
+import { useState } from "react";
+import ConfirmDialog from "../ui/confirm-dialog";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from '../ui/dropdown-menu';
-import { Input } from '../ui/input';
-import { useNavigate, useNavigation } from 'react-router-dom';
+} from "../ui/dropdown-menu";
+import { Input } from "../ui/input";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../hooks/useAuth";
 
 export function Topbar() {
   const { t, i18n } = useTranslation();
   const { theme, setTheme, effectiveTheme, toggleTheme } = useTheme();
   const navigate = useNavigate();
+  const { logout } = useAuth();
+  const [confirmOpen, setConfirmOpen] = useState(false);
 
   const changeLanguage = (lng?: string) => {
-    const target = lng || (i18n.language === 'en' ? 'pt' : 'en');
+    const target = lng || (i18n.language === "en" ? "pt" : "en");
     i18n.changeLanguage(target);
     try {
-      localStorage.setItem('i18nextLng', target);
+      localStorage.setItem("i18nextLng", target);
     } catch (e) {
       // ignore
     }
   };
-   const handleLogout = async () => {
-    localStorage.removeItem("authToken")
-    navigate('/login');
+  const handleLogout = async () => {
+    try {
+      await logout();
+    } catch (e) {
+      // ignore
+    }
+    navigate("/login");
   };
   return (
     <header className="h-16 bg-background border-b border-border flex items-center justify-between px-6">
-  <div className="flex items-center gap-4 flex-1 max-w-md">
-  <img src={LogoBola} alt="Wenda" className="w-8 h-8 mr-2" />
+      <div className="flex items-center gap-4 flex-1 max-w-md">
+        <img src={LogoBola} alt="Wenda" className="w-8 h-8 mr-2" />
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
           <Input
             type="search"
-            placeholder={t('common.search_placeholder')}
+            placeholder={t("common.search_placeholder")}
             className="pl-9 rounded-xl bg-input-background border-0"
           />
         </div>
@@ -53,10 +62,10 @@ export function Topbar() {
             </Button> */}
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
-            <DropdownMenuItem onClick={() => changeLanguage('en')}>
+            <DropdownMenuItem onClick={() => changeLanguage("en")}>
               English
             </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => changeLanguage('pt')}>
+            <DropdownMenuItem onClick={() => changeLanguage("pt")}>
               Português
             </DropdownMenuItem>
           </DropdownMenuContent>
@@ -68,9 +77,9 @@ export function Topbar() {
           size="icon"
           className="rounded-xl px-2"
           onClick={() => changeLanguage()}
-          title={t('settings.appearance.default_language')}
+          title={t("settings.appearance.default_language")}
         >
-          {(i18n.language || 'en').slice(0,2).toUpperCase()}
+          {(i18n.language || "en").slice(0, 2).toUpperCase()}
         </Button>
 
         <Button
@@ -79,15 +88,35 @@ export function Topbar() {
           onClick={toggleTheme}
           className="rounded-xl"
         >
-          {effectiveTheme === 'light' ? (
+          {effectiveTheme === "light" ? (
             <Moon className="w-5 h-5" />
           ) : (
             <Sun className="w-5 h-5" />
           )}
         </Button>
-        <Button variant="ghost" size="icon" className="rounded-xl" onClick={() => handleLogout()}>
+        <Button
+          variant="ghost"
+          size="icon"
+          className="rounded-xl"
+          onClick={() => setConfirmOpen(true)}
+        >
           <LogOut className="w-5 h-5" />
         </Button>
+
+        <ConfirmDialog
+          open={confirmOpen}
+          onOpenChange={setConfirmOpen}
+          title={t("auth.logout") || "Logout"}
+          description={
+            t("auth.logout_confirm") || "Do you really want to logout?"
+          }
+          confirmLabel={t("auth.logout") || "Logout"}
+          cancelLabel={t("common.cancel") || "Cancel"}
+          intent="destructive"
+          onConfirm={async () => {
+            await handleLogout();
+          }}
+        />
       </div>
     </header>
   );

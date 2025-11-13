@@ -26,6 +26,7 @@ import UserForm, { User } from "../components/users/UserForm";
 import UserProfile from "../components/users/UserProfile";
 import ViewUser from "../components/users/ViewUser";
 import EditUser from "../components/users/EditUser";
+import useUsers, { LocalUser } from "../hooks/useUsers";
 import {
   Dialog,
   DialogContent,
@@ -73,10 +74,39 @@ const mockUsers = [
 
 export function Users() {
   const { t } = useTranslation();
+  const {
+    items: apiUsers,
+    loading,
+    error,
+    refetch,
+    create,
+    remove,
+    update,
+  } = useUsers();
+
   const [users, setUsers] = useState<User[]>(mockUsers);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [isEditOpen, setIsEditOpen] = useState(false);
+
+  // sync API users into local UI shape when available
+  React.useEffect(() => {
+    if (apiUsers && apiUsers.length) {
+      // map LocalUser -> component User shape
+      const mapped = apiUsers.map(
+        (u: LocalUser) =>
+          ({
+            id: u.id,
+            name: u.name,
+            email: u.email,
+            role: (u.role as any) || "viewer",
+            status: (u.status as any) || "active",
+            lastLogin: u.lastLogin,
+          } as User)
+      );
+      setUsers(mapped);
+    }
+  }, [apiUsers]);
 
   return (
     <div className="space-y-6">
@@ -92,12 +122,21 @@ export function Users() {
               {t("users.add")}
             </Button>
           }
-          onCreate={(u: User) => {
-            const id = u.id ?? Date.now().toString();
+          onCreate={async (u: User) => {
+            // try creating via API, fallback to local mock
             try {
-              setUsers((prev) => [{ ...u, id }, ...prev]);
+              await create({
+                name: u.name,
+                email: u.email,
+                role: u.role as any,
+                isActive: u.status === "active",
+              } as any);
+              await refetch();
               notifySuccess(t("users.messages.created") || "User created");
             } catch (err) {
+              // fallback to local state
+              const id = u.id ?? Date.now().toString();
+              setUsers((prev) => [{ ...u, id }, ...prev]);
               notifyError(
                 t("users.messages.create_failed") || "Could not create user"
               );
@@ -193,11 +232,20 @@ export function Users() {
                           setIsEditOpen(true);
                         }
                       }}
-                      onDelete={(id: string) => {
-                        setUsers((prev) => prev.filter((x) => x.id !== id));
-                        notifySuccess(
-                          t("users.messages.deleted") || "User deleted"
-                        );
+                      onDelete={async (id: string) => {
+                        try {
+                          await remove(id);
+                          await refetch();
+                          notifySuccess(
+                            t("users.messages.deleted") || "User deleted"
+                          );
+                        } catch (err) {
+                          // fallback: remove locally
+                          setUsers((prev) => prev.filter((x) => x.id !== id));
+                          notifyError(
+                            t("users.messages.delete_failed") || String(err)
+                          );
+                        }
                       }}
                     />
                   </TableCell>
